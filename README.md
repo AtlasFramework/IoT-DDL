@@ -3,3 +3,6 @@ IoT-DDL is an XML-based human- and machine-readable configuration scheme to desc
 
 ### Read more about it in the following paper:
 > - Khaled, Ahmed E., Abdelsalam Helal, Wyatt Lindquist, and Choonhwa Lee. "IoT-DDL–device description language for the “T” in IoT." IEEE Access 6 (2018): 24048-24063. [Link: https://ieeexplore.ieee.org/abstract/document/8334820]
+
+### Also check the live version of the IoT-DDL Builder:
+[This tool allows you to interactively build an IoT-DDL file for an Atlas thing.](https://atlasframework.github.io/IoT-DDL/builder.html)
