@@ -6,3 +6,9 @@ IoT-DDL is an XML-based human- and machine-readable configuration scheme to desc
 
 ### Also check the live version of the IoT-DDL Builder:
 [This tool allows you to interactively build an IoT-DDL file for an Atlas thing.](https://atlasframework.github.io/IoT-DDL/builder.html)
+
+### IoT-DDL Examples:
+[This tool allows you to interactively build an IoT-DDL file for an Atlas thing.](https://atlasframework.github.io/IoT-DDL/builder.html)
+
+### Check the other parts of the project:
+[Atlas Thing Architecture.](https://github.com/AtlasFramework/Atlas-Thing-Architecture)
