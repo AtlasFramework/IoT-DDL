@@ -19,3 +19,4 @@ IoT-DDL is an XML-based human- and machine-readable configuration scheme to desc
 > - [Atlas Thing Architecture.](https://github.com/AtlasFramework/Atlas-Thing-Architecture)
 > - Inter-Thing Relationship Framework
 > - Runtime Interactive Development Environment
+ 
