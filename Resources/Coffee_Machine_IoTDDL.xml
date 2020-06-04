@@ -1,0 +1,175 @@
+<Atlas_Thing>
+	<Descriptive_Metadata>
+		<Thing_ATID>ATID2345</Thing_ATID>
+		<Thing_Name>Coffee Brewer</Thing_Name>
+		<Thing_Vendor>Bosch</Thing_Vendor>
+		<Thing_Model>TAS6515UC</Thing_Model>
+		<Thing_Owner>AtlasGroup</Thing_Owner>
+		<Thing_ReleaseDate>6/4/2020</Thing_ReleaseDate>
+		<Thing_Type>Powerful Thing</Thing_Type>
+		<Thing_OperatingSystem>Raspbian - Linux</Thing_OperatingSystem>
+		<Thing_ShortDescription>Prepare your favorite coffeehouse-style at the touch of a button. </Thing_ShortDescription>
+		<Thing_SSID>SPID345223</Thing_SSID>
+		<Space_Coordinates></Space_Coordinates>
+		<Space_Description>Kitchen</Space_Description>
+	</Descriptive_Metadata>
+	<Space_Constraints>
+		<Temperature>
+			<Lower_Bound>12C</Lower_Bound>
+			<Upper_Bound>40C</Upper_Bound>
+		</Temperature>
+		<Humidity>
+			<Lower_Bound></Lower_Bound>
+			<Upper_Bound></Upper_Bound>
+		</Humidity>
+		<Voltage>
+			<Lower_Bound>115V</Lower_Bound>
+			<Upper_Bound>220V</Upper_Bound>
+		</Voltage>
+		<Radio_Interference_Radius>2m</Radio_Interference_Radius>
+		<Safe_Temperature_Radius>2m</Safe_Temperature_Radius>
+	</Space_Constraints>
+	<Administrative_Metadata>
+		<Network_Manager>
+			<Type>Built-In</Type>
+			<Module>WiFi</Module>
+			<Communication_Protocol>REST</Communication_Protocol>
+			<Network_Name>AtlasGroupWifi</Network_Name>
+			<Network_Passcode></Network_Passcode>
+			<InterOperableCommunication>
+				<Broker>
+					<Vendor>HiveMQ MQTT broker</Vendor>
+					<URL>broker.hivemq.com:1883</URL>
+					<Dashboard>http://www.mqtt-dashboard.com/</Dashboard>
+				</Broker>
+			</InterOperableCommunication>
+			<Topic_Root>/Atlas</Topic_Root>
+			<Topic_Network_MQTTClient>/Network/MQTT_Client</Topic_Network_MQTTClient>
+			<Topic_Network_PrivateBroker>/Network/Private_Broker</Topic_Network_PrivateBroker>
+			<Topic_Multicast_ThingIdentity>/Multicast/Tweet_ThingIdentity</Topic_Multicast_ThingIdentity>
+			<Topic_Multicast_EntityIdentity>/Multicast/Tweet_EntityIdentity</Topic_Multicast_EntityIdentity>
+			<Topic_Multicast_API>/Multicast/API</Topic_Multicast_API>
+			<Topic_Unicast>/Unicast/Interaction</Topic_Unicast>
+			<OMA_DM>
+				<AccessName>OMA DM</AccessName>
+				<IP>10.54.20.180</IP>
+				<Port>1884</Port>
+			</OMA_DM>
+		</Network_Manager>
+		<Memory_Manager>
+			<Store_Format>Binary</Store_Format>
+			<MemoryUnit_Application>RAM</MemoryUnit_Application>
+			<MemoryUnit_Knowledge>RAM</MemoryUnit_Knowledge>
+		</Memory_Manager>
+	</Administrative_Metadata>
+	<Thing_Attachment>
+
+	</Thing_Attachment>
+</Atlas_Thing>
+<Atlas_Entity>
+	<Entity_1>
+		<Descriptive_Metadata>
+			<ID>ATE1</ID>
+			<Name>Coffee Brewer</Name>
+			<Owner>AtlasGroup</Owner>
+			<Vendor>Bosch</Vendor>
+			<Category>Hardware</Category>
+			<Type>Built-In</Type>
+			<Description>Coffee Maker to prepare coffee at the touch of a button. </Description>
+		</Descriptive_Metadata>
+		<Resource_Service>
+			<Service_1>
+				<Name>Set Brew Strength</Name>
+				<AppCategory>Eating</AppCategory>
+				<Type>Action</Type>
+				<Description>Set the required strength to brew your coffee</Description>
+				<Keywords>
+					<0>Breakfast</0>
+					<1>Coffee</1>
+					<2>Brew</2>
+				</Keywords>
+				<Contextual_Constraints>
+					<Concurrent>1</Concurrent>
+					<Time_Window>5min</Time_Window>
+					<Usage_Mode>Single</Usage_Mode>
+				</Contextual_Constraints>
+				<Temporal_Constraints>
+					<Working>
+						<StartTime>6am</StartTime>
+						<EndTime>8pm</EndTime>
+					</Working>
+					<Callable>
+						<StartTime>6am</StartTime>
+						<EndTime>8pm</EndTime>
+					</Callable>
+				</Temporal_Constraints>
+				<Inputs>
+					<Input_1>
+						<Input_Type>int</Input_Type>
+						<Input_Description>Input_Strength</Input_Description>
+					</Input_1>
+				</Inputs>
+				<OutputType>void</OutputType>
+				<OutputDescription></OutputDescription>
+				<Service_InputTypes></Service_InputTypes>
+				<Service_InputDescriptions></Service_InputDescriptions>
+			</Service_1>
+			<Service_2>
+				<Name>Turn off</Name>
+				<AppCategory>Automation</AppCategory>
+				<Type>Action</Type>
+				<Description>Turning off Coffee Brewer</Description>
+				<Keywords>
+					<0>Off</0>
+					<1>Turn</1>
+					<2>run</2>
+				</Keywords>
+				<Contextual_Constraints>
+					<Concurrent>1</Concurrent>
+					<Time_Window>2min</Time_Window>
+					<Usage_Mode>Single</Usage_Mode>
+				</Contextual_Constraints>
+				<Temporal_Constraints>
+					<Working>
+						<StartTime>6:02am</StartTime>
+						<EndTime>9pm</EndTime>
+					</Working>
+					<Callable>
+						<StartTime>6:02am</StartTime>
+						<EndTime>9pm</EndTime>
+					</Callable>
+				</Temporal_Constraints>
+				<OutputType>void</OutputType>
+				<OutputDescription></OutputDescription>
+				<Service_InputTypes></Service_InputTypes>
+				<Service_InputDescriptions></Service_InputDescriptions>
+			</Service_2>
+		</Resource_Service>
+		<UnboundedService>
+			<UB_1>
+				<Name>Alarm Clock</Name>
+				<type>Action</type>
+				<MatchValue>80</MatchValue>
+				<MatchVendor>
+					<0>*</0>
+				</MatchVendor>
+				<MatchKeywords>
+					<0>Alarm</0>
+					<1>Clock</1>
+					<2>Timer</2>
+				</MatchKeywords>
+			</UB_1>
+		</UnboundedService>
+		<Relationships>
+			<Relationship_1>
+				<Name>Morning Breakfast</Name>
+				<Establisher>AtlasGroup</Establisher>
+				<Category>Cooperative</Category>
+				<Type>Control</Type>
+				<Description>Prepare Coffee by 8am</Description>
+				<Input1>Alarm Clock</Input1>
+				<Input2>Set Brew Strength</Input2>
+			</Relationship_1>
+		</Relationships>
+	</Entity_1>
+</Atlas_Entity>
