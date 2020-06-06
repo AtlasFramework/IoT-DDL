@@ -19,7 +19,7 @@ Such configuration schemes are created by the thing vendor or owner and this the
 > - [Example for Coffee Machine IoT-DDL.](https://github.com/AtlasFramework/IoT-DDL/blob/master/Resources/Coffee_Machine_IoTDDL.xml)
 
 
-## Check the other parts of the project:
+## Check the other parts of the framework:
 > - [Atlas Thing Architecture.](https://github.com/AtlasFramework/Atlas-Thing-Architecture)
 > - Inter-Thing Relationship Framework
 > - Runtime Interactive Development Environment
