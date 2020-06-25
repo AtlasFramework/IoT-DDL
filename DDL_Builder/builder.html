@@ -15,7 +15,9 @@
 			body, form { padding: 3em 0em; }
 			h2+h3 { margin-top: -0.5em !important; }
 			.center { text-align: center !important; }
+			.segment.center { margin: auto !important; }
 			.wide { width: 100%; }
+			.tight { margin-bottom: 0px !important; }
 			.add-row, .remove-row, .move-row, .choose { cursor: pointer; }
 			#templates { display: none; }
 			.help { font-size: 0.9rem !important; }
@@ -112,19 +114,28 @@
 				if (r.attr('data-entity') != e.attr('data-entity'))
 					return;
 
-				let table = r.find('table.src > tbody');
-				let name  = e.attr('data-name');
+				let selects = r.find('.this, .that').find('select');
+				let name = e.attr('data-name');
 
-				let row = cloneTemplate('service-row', true);
-				row.attr({
+				selects.append($('<option>', {
+					'text':      name,
 					'data-type': e.attr('data-type'),
 					'data-id':   e.attr('data-id')
-				});
+				}));
 
-				row.children(':first').text(name);
-				table.append(row);
+				// let table = r.find('table.src > tbody');
+				// let name  = e.attr('data-name');
 
-				updateDefault(table);
+				// let row = cloneTemplate('service-row', true);
+				// row.attr({
+				// 	'data-type': e.attr('data-type'),
+				// 	'data-id':   e.attr('data-id')
+				// });
+
+				// row.children(':first').text(name);
+				// table.append(row);
+
+				// updateDefault(table);
 			};
 			let createServiceChooser = function (rid) {
 				let r = sections.relationship.elements[rid];
@@ -136,24 +147,26 @@
 				append(sections.service.elements);
 				append(sections.unbounded.elements);
 
-				let src    = r.find('table.src > tbody');
-				let dst    = r.find('table.dst > tbody');
-				let params = { animation: 150, group: `r{$rid}`, filter: '.fixed', onEnd: function(e) {
-					updateDefault($(e.from));
-					updateDefault($(e.to));
-				} };
+				r.find('.kind > select').change()
 
-				sections.relationship.sorters[rid] = [
-					Sortable.create(src[0], params),
-					Sortable.create(dst[0], params)
-				];
+				// let src    = r.find('table.src > tbody');
+				// let dst    = r.find('table.dst > tbody');
+				// let params = { animation: 150, group: `r{$rid}`, filter: '.fixed', onEnd: function(e) {
+				// 	updateDefault($(e.from));
+				// 	updateDefault($(e.to));
+				// } };
+
+				// sections.relationship.sorters[rid] = [
+				// 	Sortable.create(src[0], params),
+				// 	Sortable.create(dst[0], params)
+				// ];
 			};
 			let destroyServiceChooser = function (rid) {
-				ss = sections.relationship.sorters[rid];
-				ss[0].destroy();
-				ss[1].destroy();
+				// ss = sections.relationship.sorters[rid];
+				// ss[0].destroy();
+				// ss[1].destroy();
 
-				sections.relationship.sorters[rid] = null;
+				// sections.relationship.sorters[rid] = null;
 			};
 			let refreshServiceChoosers = function (e, mode = 'update') {
 				for (let id in sections.relationship.elements) {
@@ -161,27 +174,53 @@
 					if (e.attr('data-entity') != r.attr('data-entity'))
 						continue;
 
-					let table = r.find('table > tbody');
-					let eid   = e.attr('data-id');
-					let type  = e.attr('data-type');
-					let name  = e.attr('data-name');
+					let selects = r.find('.this, .that').find('select');
+					let name = e.attr('data-name');
+					let type = e.attr('data-type');
+					let eid  = e.attr('data-id');
 
-					let row = table.children(`[data-type="${type}"][data-id="${eid}"]`);
+					let option = selects.children(`[data-type="${type}"][data-id="${eid}"]`);
 					switch (mode) {
 						case 'add':
 							addToServiceChooser(r, e);
 							break;
 						case 'update':
-							row.children(':first').text(name);
+							option.text(name);
+							// FIXME: not reliable
+							selects.closest('.ui.dropdown').dropdown('refresh');
 							break;
 						case 'remove':
-							let parent = row.parent();
-
-							row.remove();
-							updateDefault(parent);
+							option.remove();
 							break;
 					}
 				}
+
+				// for (let id in sections.relationship.elements) {
+				// 	let r = sections.relationship.elements[id];
+				// 	if (e.attr('data-entity') != r.attr('data-entity'))
+				// 		continue;
+
+				// 	let table = r.find('table > tbody');
+				// 	let eid   = e.attr('data-id');
+				// 	let type  = e.attr('data-type');
+				// 	let name  = e.attr('data-name');
+
+				// 	let row = table.children(`[data-type="${type}"][data-id="${eid}"]`);
+				// 	switch (mode) {
+				// 		case 'add':
+				// 			addToServiceChooser(r, e);
+				// 			break;
+				// 		case 'update':
+				// 			row.children(':first').text(name);
+				// 			break;
+				// 		case 'remove':
+				// 			let parent = row.parent();
+
+				// 			row.remove();
+				// 			updateDefault(parent);
+				// 			break;
+				// 	}
+				// }
 			};
 
 			let updateName = function (elem, name = '') {
@@ -286,7 +325,7 @@
 
 			$(function() {
 				setupUI();
-				$('#network-dropdown').dropdown('setting', 'onChange', function (v) {
+				$('#update-network').dropdown('setting', 'onChange', function (v) {
 					let mode = 'flex';
 					if (v != 'WiFi')
 						mode = 'none';
@@ -374,6 +413,15 @@
 					let content = $(this).closest('.content');
 
 					updateName(content, name);
+				});
+				$('.delegate').on('change', '.update-relationship', function (v) {
+					let parent = $(this).closest('.behavior');
+					let fields = parent.find('.this, .that');
+
+					fields.children('label').css({ 'display': 'none' });
+
+					let kind = $(this).find('option:selected').text().toLowerCase();
+					fields.find(`label[data-kind='${kind}']`).css({ 'display': 'block' });
 				});
 
 				$('.delegate').on('click', '.ui.add-row', function(e) {
@@ -627,7 +675,7 @@
 							<label>Technology <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<select class="ui fluid dropdown" id="network-dropdown" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Module">
+							<select class="ui fluid dropdown" id="update-network" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Module">
 								<option>WiFi</option>
 								<option>Ethernet</option>
 								<option>BLE</option>
@@ -1040,7 +1088,7 @@
 					</span></label>
 					<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Description"/>
 				</div>
-				
+
 				<h4 class="ui dividing header">Services</h4>
 
 				<div class="fluid accordion" data-section="service">
@@ -1126,12 +1174,10 @@
 					</div>
 				</div>
 
-				
-				
 				<h4 class="ui dividing header">Contextual Constraints<span class="ui icon help" data-content="">
 					<i class="question circle icon"></i>
 				</span></h4>
-				
+
 				<div class="field">
 					<label>Concurrent<span class="ui icon help" data-content="">
 						<i class="question circle icon"></i>
@@ -1144,7 +1190,7 @@
 					</span></label>
 					<input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Contextual_Constraints.Time_Window"/>
 				</div>
-				
+
 				<div class="field">
 					<label>Usage Mode<span class="ui icon help" data-content="">
 						<i class="question circle icon"></i>
@@ -1155,12 +1201,7 @@
 							<option></option>
 					</select>
 				</div>
-					
-					
-					
-				
-				
-				
+
 				<h4 class="ui dividing header">Temporal Constraints <span class="ui icon help" data-content="">
 					<i class="question circle icon"></i>
 				</span></h4>
@@ -1262,7 +1303,6 @@
 				</tr></tbody>
 			</table>
 
-
 			<div class="content delegate" id="unbounded">
 				<h4 class="ui dividing header">Descriptive Metadata</h4>
 
@@ -1314,88 +1354,69 @@
 			<div class="content delegate" id="relationship">
 				<h4 class="ui dividing header">Descriptive Metadata</h4>
 
-				<div class="four fields">
-					<div class="field">
+				<div class="fields">
+					<div class="four wide field">
 						<label>Name <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
 						<input type="text" class="name" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Name"/>
 					</div>
-					<div class="field">
+					<div class="four wide field">
 						<label>Establisher <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
 						<input type="text" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Establisher"/>
 					</div>
-					<div class="field">
-						<label>Category <span class="ui icon help" data-content="">
+					<div class="eight wide field">
+						<label>Description <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Category">
-							<option>Cooperative</option>
-							<option>Competitive</option>
-						</select>
-					</div>
-					<div class="field">
-						<label>Type <span class="ui icon help" data-content="">
-							<i class="question circle icon"></i>
-						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Type">
-							<option>Contest</option>
-							<option>Subsume</option>
-							<option>Control</option>
-						</select>
+						<input type="text" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Description"/>
 					</div>
 				</div>
-				<div class="field">
-					<label>Description <span class="ui icon help" data-content="">
-						<i class="question circle icon"></i>
-					</span></label>
-					<input type="text" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Description"/>
-				</div>
-				
-				
-				<div class="field">
-						<label>Input1 (Service or unbounded service) <span class="ui icon help" data-content="">
-							<i class="question circle icon"></i>
-						</span></label>
-						<input type="text" class="name" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Input1"/>
-				</div>
-				<div class="field">
-						<label>Input2 (Service or unbounded service) <span class="ui icon help" data-content="">
-							<i class="question circle icon"></i>
-						</span></label>
-						<input type="text" class="name" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Input2"/>
-				</div>
-				
-				
-				
 
-				<h4 class="ui dividing header">Services <span class="ui icon help" data-content="">
+				<h4 class="ui dividing header">Behavior <span class="ui icon help" data-content="">
 					<i class="question circle icon"></i>
 				</span></h4>
 
-				<div class="two fields">
-					<div class="field">
-						<table class="ui white table src">
-							<thead><th>Available</th></thead>
-
-							<tbody><tr class="fixed">
-								<td><i>No services available.</i></td>
-							</tr></tbody>
-						</table>
+				<div class="behavior three fields">
+					<div class="kind field">
+						<label>&#160</label>
+						<select class="update-relationship ui fluid dropdown">
+							<option>Control</option>
+							<option>Drive</option>
+							<option>Support</option>
+							<option>Extend</option>
+							<option>Contest</option>
+							<option>Interfere</option>
+						</select>
 					</div>
-					<div class="field">
-						<table class="ui white table dst">
-							<thead><th>Active</th></thead>
 
-							<tbody><tr class="fixed">
-								<td><i>Drag available services here.</i></td>
-							</tr></tbody>
-						</table>
+					<div class="this field">
+						<label data-kind="control">IF</label>
+						<label data-kind="drive">USE</label>
+						<label data-kind="support">BEFORE</label>
+						<label data-kind="extend">DO</label>
+						<label data-kind="contest">PREFER USING</label>
+						<label data-kind="interfere">DO NOT DO</label>
+
+						<select class="ui fluid dropdown">
+							<option value="">select 'this' service</option>
+						</select>
+					</div>
+					<div class="that field">
+						<label data-kind="control">THEN</label>
+						<label data-kind="drive">TO DO</label>
+						<label data-kind="support">CHECK ON</label>
+						<label data-kind="extend">WHILE DOING</label>
+						<label data-kind="contest">OVER</label>
+						<label data-kind="interfere">IF DOING</label>
+
+						<select class="ui fluid dropdown">
+							<option value="">select 'that' service</option>
+						</select>
 					</div>
 				</div>
-			</div>
 
 			<table id="service-row">
 				<tbody><tr class="choose">
