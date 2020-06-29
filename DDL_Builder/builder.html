@@ -122,20 +122,6 @@
 					'data-type': e.attr('data-type'),
 					'data-id':   e.attr('data-id')
 				}));
-
-				// let table = r.find('table.src > tbody');
-				// let name  = e.attr('data-name');
-
-				// let row = cloneTemplate('service-row', true);
-				// row.attr({
-				// 	'data-type': e.attr('data-type'),
-				// 	'data-id':   e.attr('data-id')
-				// });
-
-				// row.children(':first').text(name);
-				// table.append(row);
-
-				// updateDefault(table);
 			};
 			let createServiceChooser = function (rid) {
 				let r = sections.relationship.elements[rid];
@@ -148,25 +134,9 @@
 				append(sections.unbounded.elements);
 
 				r.find('.kind > select').change()
-
-				// let src    = r.find('table.src > tbody');
-				// let dst    = r.find('table.dst > tbody');
-				// let params = { animation: 150, group: `r{$rid}`, filter: '.fixed', onEnd: function(e) {
-				// 	updateDefault($(e.from));
-				// 	updateDefault($(e.to));
-				// } };
-
-				// sections.relationship.sorters[rid] = [
-				// 	Sortable.create(src[0], params),
-				// 	Sortable.create(dst[0], params)
-				// ];
 			};
 			let destroyServiceChooser = function (rid) {
-				// ss = sections.relationship.sorters[rid];
-				// ss[0].destroy();
-				// ss[1].destroy();
-
-				// sections.relationship.sorters[rid] = null;
+				//
 			};
 			let refreshServiceChoosers = function (e, mode = 'update') {
 				for (let id in sections.relationship.elements) {
@@ -194,33 +164,6 @@
 							break;
 					}
 				}
-
-				// for (let id in sections.relationship.elements) {
-				// 	let r = sections.relationship.elements[id];
-				// 	if (e.attr('data-entity') != r.attr('data-entity'))
-				// 		continue;
-
-				// 	let table = r.find('table > tbody');
-				// 	let eid   = e.attr('data-id');
-				// 	let type  = e.attr('data-type');
-				// 	let name  = e.attr('data-name');
-
-				// 	let row = table.children(`[data-type="${type}"][data-id="${eid}"]`);
-				// 	switch (mode) {
-				// 		case 'add':
-				// 			addToServiceChooser(r, e);
-				// 			break;
-				// 		case 'update':
-				// 			row.children(':first').text(name);
-				// 			break;
-				// 		case 'remove':
-				// 			let parent = row.parent();
-
-				// 			row.remove();
-				// 			updateDefault(parent);
-				// 			break;
-				// 	}
-				// }
 			};
 
 			let updateName = function (elem, name = '') {
@@ -325,9 +268,9 @@
 
 			$(function() {
 				setupUI();
-				$('#update-network').dropdown('setting', 'onChange', function (v) {
+				$('#update-network').dropdown('setting', 'onChange', function (e) {
 					let mode = 'flex';
-					if (v != 'WiFi')
+					if (e != 'WiFi')
 						mode = 'none';
 
 					$('#network-fields').css({ 'display': mode });
@@ -362,6 +305,7 @@
 					switch (type) {
 						case 'service':
 							setupInputRows(id);
+							content.find('.update-statement').change()
 							refreshServiceChoosers(content, 'add');
 							break;
 						case 'unbounded':
@@ -408,23 +352,32 @@
 					}
 				});
 
-				$('.delegate').on('input', 'input.name', function(e) {
+				$('.delegate').on('input', 'input.name', function (e) {
 					let name    = $(this).val();
 					let content = $(this).closest('.content');
 
 					updateName(content, name);
 				});
-				$('.delegate').on('change', '.update-relationship', function (v) {
+				$('.delegate').on('change', '.update-statement', function (e) {
+					let parent = $(this).closest('.functionality');
+					let fields = parent.find('.statements');
+
+					fields.children('div').css({ 'display': 'none' });
+
+					let stmt = $(this).find('option:selected').val();
+					fields.find(`div[data-statement='${stmt}']`).css({ 'display': 'flex' });
+				});
+				$('.delegate').on('change', '.update-relationship', function (e) {
 					let parent = $(this).closest('.behavior');
 					let fields = parent.find('.this, .that');
 
 					fields.children('label').css({ 'display': 'none' });
 
-					let kind = $(this).find('option:selected').text().toLowerCase();
+					let kind = $(this).find('option:selected').val();
 					fields.find(`label[data-kind='${kind}']`).css({ 'display': 'block' });
 				});
 
-				$('.delegate').on('click', '.ui.add-row', function(e) {
+				$('.delegate').on('click', '.ui.add-row', function (e) {
 					let target = $(this).attr('data-target');
 					let dst    = $(this).closest('table').children('tbody');
 					let parent = $(this).closest('[data-type="service"]');
@@ -438,12 +391,32 @@
 
 					setupUI();
 				});
-				$('.delegate').on('click', '.ui.remove-row', function(e) {
+				$('.delegate').on('click', '.ui.remove-row', function (e) {
 					let row    = $(this).closest('tr');
 					let parent = $(this).closest('tbody')
 
 					row.remove();
 					updateDefault(parent);
+				});
+				$('.delegate').on('click', '.ui.add-statement', function (e) {
+					let parent = $(this).closest('.functionality');
+
+					let code = undefined;
+					switch(parent.find('.update-statement').find('option:selected').val()) {
+						case 'print':
+							code = `print("${parent.find('#print-value').val()}"");`;
+							break;
+						case 'digital_write':
+							code = `digital_write(${parent.find('#digital_write-pin').val()}, ${parent.find('#digital_write-value').val()});`;
+							break;
+					}
+
+					if (code === undefined)
+						return;
+
+					let editor = ace.edit(parent.find('.ace_editor')[0]);
+					console.log( parent.find('.ace_editor'));
+					editor.setValue(editor.getValue() + '\n' + code);
 				});
 
 				let rules = $.fn.form.settings.rules;
@@ -1275,12 +1248,44 @@
 					<i class="question circle icon"></i>
 				</span></h4>
 
-				<div class="field">
+				<div class="functionality">
+					<div class="field">
 <textarea class="editor" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Formula">
 // ~ Service body C code block ~
 // Input parameters are available as named above
 // Any return values should match the specified output type
 </textarea>
+					</div>
+
+					<div class="ui horizontal divider">or</div>
+
+					<div class="two fields">
+						<div class="field">
+							<label>Statement Generator</label>
+							<select class="update-statement ui fluid dropdown">
+								<option value="print">Print</option>
+								<option value="digital_write">Write Digital Value to GPIO</option>
+							</select>
+						</div>
+						<div class="field">
+							<label>&#160</label>
+							<div class="wide ui add-statement button">Insert Above</div>
+						</div>
+					</div>
+
+					<div class="statements">
+						<div class="field" data-statement="print">
+							<input id="print-value" type="text" placeholder="String to Print"/>
+						</div>
+						<div class="two fields" data-statement="digital_write">
+							<div class="field">
+								<input id="digital_write-pin" type="text" placeholder="GPIO Pin"/>
+							</div>
+							<div class="field">
+								<input id="digital_write-value" type="text" placeholder="Value"/>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -1383,12 +1388,12 @@
 					<div class="kind field">
 						<label>&#160</label>
 						<select class="update-relationship ui fluid dropdown">
-							<option>Control</option>
-							<option>Drive</option>
-							<option>Support</option>
-							<option>Extend</option>
-							<option>Contest</option>
-							<option>Interfere</option>
+							<option value="control">Control</option>
+							<option value="drive">Drive</option>
+							<option value="support">Support</option>
+							<option value="extend">Extend</option>
+							<option value="contest">Contest</option>
+							<option value="interfere">Interfere</option>
 						</select>
 					</div>
 
