@@ -398,17 +398,53 @@
 					row.remove();
 					updateDefault(parent);
 				});
+			
+				
+				
 				$('.delegate').on('click', '.ui.add-statement', function (e) {
 					let parent = $(this).closest('.functionality');
 
 					let code = undefined;
 					switch(parent.find('.update-statement').find('option:selected').val()) {
-						case 'print':
-							code = `print("${parent.find('#print-value').val()}"");`;
+						case 'print_value':
+							code = `print(${parent.find('#print-value').val()});`;
 							break;
-						case 'digital_write':
-							code = `digital_write(${parent.find('#digital_write-pin').val()}, ${parent.find('#digital_write-value').val()});`;
+						
+						case 'print_string':
+							code = `print("${parent.find('#print-string').val()}");`;
 							break;
+							
+						case 'DigitalWrite_High':
+							code = `DigitalWrite_High(${parent.find('#digitalwrite_high-pin').val()});`;
+							break;
+						
+						case 'DigitalWrite_Low':
+							code = `DigitalWrite_Low(${parent.find('#digitalwrite_low-pin').val()});`;
+							break;
+							
+						case 'Delay':
+							code = `Delay(${parent.find('#Delay-value').val()});`;
+							break;
+							
+						case 'DigitalWrite_Blink':
+							code = `DigitalWrite_Blink(${parent.find('#DigitalWrite_Blink-pin').val()}, ${parent.find('#DigitalWrite_Blink-delayValue').val()});`;
+							break;
+							
+							
+						case 'AnalogWrite':
+							code = `AnalogWrite(${parent.find('#AnalogWrite-pin').val()}, ${parent.find('#AnalogWrite-Value').val()});`;
+							break;
+							
+							
+						case 'DigitalRead':
+							code = `int value = DigitalRead(${parent.find('#DigitalRead-pin').val()});`;
+							break;
+							
+							
+						case 'AnalogRead':
+							code = `int value = AnalogRead(${parent.find('#AnalogRead-pin').val()});`;
+							break;
+							
 					}
 
 					if (code === undefined)
@@ -418,6 +454,11 @@
 					console.log( parent.find('.ace_editor'));
 					editor.setValue(editor.getValue() + '\n' + code);
 				});
+				
+				
+				
+				
+				
 
 				let rules = $.fn.form.settings.rules;
 				rules.ip   = function(v) { return (v == '' || rules.regExp(v, /^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/)); };
@@ -1248,13 +1289,14 @@
 					<i class="question circle icon"></i>
 				</span></h4>
 
+				
 				<div class="functionality">
 					<div class="field">
-<textarea class="editor" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Formula">
-// ~ Service body C code block ~
-// Input parameters are available as named above
-// Any return values should match the specified output type
-</textarea>
+						<textarea class="editor" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Formula">
+						// ~ Service body C code block ~
+						// Input parameters are available as named above
+						// Any return values should match the specified output type
+						</textarea>
 					</div>
 
 					<div class="ui horizontal divider">or</div>
@@ -1263,8 +1305,16 @@
 						<div class="field">
 							<label>Statement Generator</label>
 							<select class="update-statement ui fluid dropdown">
-								<option value="print">Print</option>
-								<option value="digital_write">Write Digital Value to GPIO</option>
+								<option value="print_value">Print Value</option>
+								<option value="print_string">Print String</option>
+								<option value="DigitalWrite_High">Write Digital high (5 Volt)</option>
+								<option value="DigitalWrite_Low">Write Digital Low (0 Volt)</option>
+								<option value="Delay">Delay in milliseconds</option>
+								<option value="DigitalWrite_Blink">Blink digital Pin with delay</option>
+								<option value="AnalogWrite">Write analog value to an analog pin</option>
+								<option value="DigitalRead">Read the value from digital pin</option>
+								<option value="AnalogRead">Read the value from analog pin</option>
+								
 							</select>
 						</div>
 						<div class="field">
@@ -1274,21 +1324,58 @@
 					</div>
 
 					<div class="statements">
-						<div class="field" data-statement="print">
-							<input id="print-value" type="text" placeholder="String to Print"/>
+						<div class="field" data-statement="print_value">
+							<input id="print-value" type="text" placeholder="value or variable to Print"/>
 						</div>
-						<div class="two fields" data-statement="digital_write">
+						
+						<div class="field" data-statement="print_string">
+							<input id="print-string" type="text" placeholder="String to Print"/>
+						</div>
+						
+						<div class="field" data-statement="DigitalWrite_High">
+							<input id="digitalwrite_high-pin" type="text" placeholder="GPIO Pin"/>
+						</div>
+						
+						<div class="field" data-statement="DigitalWrite_Low">
+							<input id="digitalwrite_low-pin" type="text" placeholder="GPIO Pin"/>
+						</div>
+						
+						<div class="field" data-statement="Delay">
+							<input id="Delay-value" type="text" placeholder="milliseconds"/>
+						</div>
+						
+						<div class="field" data-statement="DigitalRead">
+							<input id="DigitalRead-pin" type="text" placeholder="GPIO Pin"/>
+						</div>
+						
+						<div class="field" data-statement="AnalogRead">
+							<input id="AnalogRead-pin" type="text" placeholder="GPIO Pin"/>
+						</div>
+						
+						<div class="two fields" data-statement="DigitalWrite_Blink">
 							<div class="field">
-								<input id="digital_write-pin" type="text" placeholder="GPIO Pin"/>
+								<input id="DigitalWrite_Blink-pin" type="text" placeholder="GPIO Pin"/>
 							</div>
 							<div class="field">
-								<input id="digital_write-value" type="text" placeholder="Value"/>
+								<input id="DigitalWrite_Blink-delayValue" type="text" placeholder="Delay Value in milliseconds"/>
 							</div>
 						</div>
+						
+						<div class="two fields" data-statement="AnalogWrite">
+							<div class="field">
+								<input id="AnalogWrite-pin" type="text" placeholder="GPIO Pin"/>
+							</div>
+							<div class="field">
+								<input id="AnalogWrite-Value" type="text" placeholder="Analog value"/>
+							</div>
+						</div>
+						
 					</div>
 				</div>
 			</div>
-
+			
+			
+			
 			<table id="input-row">
 				<tbody><tr>
 					<td>
