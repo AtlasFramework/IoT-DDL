@@ -15,13 +15,16 @@
 			body, form { padding: 3em 0em; }
 			h2+h3 { margin-top: -0.5em !important; }
 			.center { text-align: center !important; }
+			.segment.center { margin: auto !important; }
 			.wide { width: 100%; }
+			.tight { margin-bottom: 0px !important; }
 			.add-row, .remove-row, .move-row, .choose { cursor: pointer; }
 			#templates { display: none; }
 			.help { font-size: 0.9rem !important; }
 
 			.accordion .title.subcontrol { pointer-events: none; }
 			.accordion .title.subcontrol .control { pointer-events: all; }
+
 			.accordion .title.disabled {
 				cursor: default !important;
 				font-weight: normal !important;
@@ -111,19 +114,14 @@
 				if (r.attr('data-entity') != e.attr('data-entity'))
 					return;
 
-				let table = r.find('table.src > tbody');
-				let name  = e.attr('data-name');
+				let selects = r.find('.this, .that').find('select');
+				let name = e.attr('data-name');
 
-				let row = cloneTemplate('service-row', true);
-				row.attr({
+				selects.append($('<option>', {
+					'text':      name,
 					'data-type': e.attr('data-type'),
 					'data-id':   e.attr('data-id')
-				});
-
-				row.children(':first').text(name);
-				table.append(row);
-
-				updateDefault(table);
+				}));
 			};
 			let createServiceChooser = function (rid) {
 				let r = sections.relationship.elements[rid];
@@ -135,24 +133,10 @@
 				append(sections.service.elements);
 				append(sections.unbounded.elements);
 
-				let src    = r.find('table.src > tbody');
-				let dst    = r.find('table.dst > tbody');
-				let params = { animation: 150, group: `r{$rid}`, filter: '.fixed', onEnd: function(e) {
-					updateDefault($(e.from));
-					updateDefault($(e.to));
-				} };
-
-				sections.relationship.sorters[rid] = [
-					Sortable.create(src[0], params),
-					Sortable.create(dst[0], params)
-				];
+				r.find('.kind > select').change()
 			};
 			let destroyServiceChooser = function (rid) {
-				ss = sections.relationship.sorters[rid];
-				ss[0].destroy();
-				ss[1].destroy();
-
-				sections.relationship.sorters[rid] = null;
+				//
 			};
 			let refreshServiceChoosers = function (e, mode = 'update') {
 				for (let id in sections.relationship.elements) {
@@ -160,24 +144,23 @@
 					if (e.attr('data-entity') != r.attr('data-entity'))
 						continue;
 
-					let table = r.find('table > tbody');
-					let eid   = e.attr('data-id');
-					let type  = e.attr('data-type');
-					let name  = e.attr('data-name');
+					let selects = r.find('.this, .that').find('select');
+					let name = e.attr('data-name');
+					let type = e.attr('data-type');
+					let eid  = e.attr('data-id');
 
-					let row = table.children(`[data-type="${type}"][data-id="${eid}"]`);
+					let option = selects.children(`[data-type="${type}"][data-id="${eid}"]`);
 					switch (mode) {
 						case 'add':
 							addToServiceChooser(r, e);
 							break;
 						case 'update':
-							row.children(':first').text(name);
+							option.text(name);
+							// FIXME: not reliable
+							selects.closest('.ui.dropdown').dropdown('refresh');
 							break;
 						case 'remove':
-							let parent = row.parent();
-
-							row.remove();
-							updateDefault(parent);
+							option.remove();
 							break;
 					}
 				}
@@ -285,9 +268,9 @@
 
 			$(function() {
 				setupUI();
-				$('#network-dropdown').dropdown('setting', 'onChange', function (v) {
+				$('#update-network').dropdown('setting', 'onChange', function (e) {
 					let mode = 'flex';
-					if (v != 'WiFi')
+					if (e != 'WiFi')
 						mode = 'none';
 
 					$('#network-fields').css({ 'display': mode });
@@ -322,6 +305,7 @@
 					switch (type) {
 						case 'service':
 							setupInputRows(id);
+							content.find('.update-statement').change()
 							refreshServiceChoosers(content, 'add');
 							break;
 						case 'unbounded':
@@ -368,14 +352,32 @@
 					}
 				});
 
-				$('.delegate').on('input', 'input.name', function(e) {
+				$('.delegate').on('input', 'input.name', function (e) {
 					let name    = $(this).val();
 					let content = $(this).closest('.content');
 
 					updateName(content, name);
 				});
+				$('.delegate').on('change', '.update-statement', function (e) {
+					let parent = $(this).closest('.functionality');
+					let fields = parent.find('.statements');
 
-				$('.delegate').on('click', '.ui.add-row', function(e) {
+					fields.children('div').css({ 'display': 'none' });
+
+					let stmt = $(this).find('option:selected').val();
+					fields.find(`div[data-statement='${stmt}']`).css({ 'display': 'flex' });
+				});
+				$('.delegate').on('change', '.update-relationship', function (e) {
+					let parent = $(this).closest('.behavior');
+					let fields = parent.find('.this, .that');
+
+					fields.children('label').css({ 'display': 'none' });
+
+					let kind = $(this).find('option:selected').val();
+					fields.find(`label[data-kind='${kind}']`).css({ 'display': 'block' });
+				});
+
+				$('.delegate').on('click', '.ui.add-row', function (e) {
 					let target = $(this).attr('data-target');
 					let dst    = $(this).closest('table').children('tbody');
 					let parent = $(this).closest('[data-type="service"]');
@@ -389,13 +391,74 @@
 
 					setupUI();
 				});
-				$('.delegate').on('click', '.ui.remove-row', function(e) {
+				$('.delegate').on('click', '.ui.remove-row', function (e) {
 					let row    = $(this).closest('tr');
 					let parent = $(this).closest('tbody')
 
 					row.remove();
 					updateDefault(parent);
 				});
+			
+				
+				
+				$('.delegate').on('click', '.ui.add-statement', function (e) {
+					let parent = $(this).closest('.functionality');
+
+					let code = undefined;
+					switch(parent.find('.update-statement').find('option:selected').val()) {
+						case 'print_value':
+							code = `print(${parent.find('#print-value').val()});`;
+							break;
+						
+						case 'print_string':
+							code = `print("${parent.find('#print-string').val()}");`;
+							break;
+							
+						case 'DigitalWrite_High':
+							code = `DigitalWrite_High(${parent.find('#digitalwrite_high-pin').val()});`;
+							break;
+						
+						case 'DigitalWrite_Low':
+							code = `DigitalWrite_Low(${parent.find('#digitalwrite_low-pin').val()});`;
+							break;
+							
+						case 'Delay':
+							code = `Delay(${parent.find('#Delay-value').val()});`;
+							break;
+							
+						case 'DigitalWrite_Blink':
+							code = `DigitalWrite_Blink(${parent.find('#DigitalWrite_Blink-pin').val()}, ${parent.find('#DigitalWrite_Blink-delayValue').val()});`;
+							break;
+							
+							
+						case 'AnalogWrite':
+							code = `AnalogWrite(${parent.find('#AnalogWrite-pin').val()}, ${parent.find('#AnalogWrite-Value').val()});`;
+							break;
+							
+							
+						case 'DigitalRead':
+							code = `int value = DigitalRead(${parent.find('#DigitalRead-pin').val()});`;
+							break;
+							
+							
+						case 'AnalogRead':
+							code = `int value = AnalogRead(${parent.find('#AnalogRead-pin').val()});`;
+							break;
+							
+					}
+
+					if (code === undefined)
+						return;
+
+					let editor = ace.edit(parent.find('.ace_editor')[0]);
+					console.log( parent.find('.ace_editor'));
+					editor.setValue(editor.getValue() + '\n' + code);
+				});
+				
+				
+				
+				
+				
 
 				let rules = $.fn.form.settings.rules;
 				rules.ip   = function(v) { return (v == '' || rules.regExp(v, /^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/)); };
@@ -559,14 +622,14 @@
 							<label>Coordinates <span class="ui icon help" data-content="The GPS coordinates of your smart space: LAX, LAT.">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Coordinates"/>
 						</div>
 					</div>
 					<div class="field">
 						<label>Description <span class="ui icon help" data-content="A short description of your smart space (e.g., Bedroom, living-room, classroom).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text"/>
+						<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Description"/>
 					</div>
 
 					<h4 class="ui dividing header">Characteristics</h4>
@@ -582,9 +645,12 @@
 								<th>Upper Bound</th>
 							</thead>
 							<tbody>
-								<tr><td>Temperature</td><td><input type="text"/></td><td><input type="text"/></td></tr>
-								<tr><td>Humidity</td><td><input type="text"/></td><td><input type="text"/></td></tr>
-								<tr><td>Voltage</td><td><input type="text"/></td><td><input type="text"/></td></tr>
+								<tr><td>Temperature</td><td><input type="text" name="Atlas_Thing.Space_Constraints.Temperature.Lower_Bound"/></td>
+								    <td><input type="text" name="Atlas_Thing.Space_Constraints.Temperature.Upper_Bound"/></td></tr>
+								<tr><td>Humidity</td><td><input type="text" name="Atlas_Thing.Space_Constraints.Humidity.Lower_Bound"/></td>
+								    <td><input type="text" name="Atlas_Thing.Space_Constraints.Humidity.Upper_Bound"/></td></tr>
+								<tr><td>Voltage</td><td><input type="text" name="Atlas_Thing.Space_Constraints.Voltage.Lower_Bound"/></td>
+								    <td><input type="text" name="Atlas_Thing.Space_Constraints.Voltage.Upper_Bound"/></td></tr>
 							</tbody>
 						</table>
 					</div>
@@ -594,13 +660,13 @@
 							<label>Radio Interference Radius <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text"/>
+							<input type="text" name="Atlas_Thing.Space_Constraints.Radio_Interference_Radius"/>
 						</div>
 						<div class="field">
 							<label>Safe Temperature Radius <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text"/>
+							<input type="text" name="Atlas_Thing.Space_Constraints.Safe_Temperature_Radius"/>
 						</div>
 					</div>
 
@@ -623,7 +689,7 @@
 							<label>Technology <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<select class="ui fluid dropdown" id="network-dropdown" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Module">
+							<select class="ui fluid dropdown" id="update-network" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Module">
 								<option>WiFi</option>
 								<option>Ethernet</option>
 								<option>BLE</option>
@@ -663,19 +729,19 @@
 							<label>Broker Vendor <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Vendor"/>
 						</div>
 						<div class="field">
 							<label>Broker URL <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.URL"/>
 						</div>
 						<div class="field">
 							<label>Broker Dashboard <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Dashboard"/>
 						</div>
 					</div>
 					<div class="field">
@@ -707,19 +773,19 @@
 							<label>Access Name <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA-DM_AccessName"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA_DM.AccessName"/>
 						</div>
 						<div class="four wide field">
 							<label>IP Address <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA-DM_IP"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA-DM.IP"/>
 						</div>
 						<div class="four wide field">
 							<label>Port <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA-DM_Port"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA-DM.Port"/>
 						</div>
 					</div>
 
@@ -987,13 +1053,13 @@
 						<label>ID <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Entity_ID"/>
+						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.ID"/>
 					</div>
 					<div class="field">
 						<label>Name <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" class="name" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Entity_Name"/>
+						<input type="text" class="name" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Name"/>
 					</div>
 				</div>
 				<div class="four fields">
@@ -1001,19 +1067,19 @@
 						<label>Owner <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Entity_Owner"/>
+						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Owner"/>
 					</div>
 					<div class="field">
 						<label>Vendor <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Entity_Vendor"/>
+						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Vendor"/>
 					</div>
 					<div class="field">
 						<label>Category <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Entity_Category">
+						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Category">
 							<option>Software</option>
 							<option>Hardware</option>
 							<option>Hybrid</option>
@@ -1023,7 +1089,7 @@
 						<label>Type <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Entity_Type">
+						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Type">
 							<option>Built-In</option>
 							<option>Connected</option>
 							<option>Remote</option>
@@ -1034,7 +1100,7 @@
 					<label>Description <span class="ui icon help" data-content="">
 						<i class="question circle icon"></i>
 					</span></label>
-					<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Entity_Description"/>
+					<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Description"/>
 				</div>
 
 				<h4 class="ui dividing header">Services</h4>
@@ -1073,13 +1139,13 @@
 						<label>Name <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" class="name" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Name"/>
+						<input type="text" class="name" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Name"/>
 					</div>
 					<div class="field">
 						<label>Category <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_AppCategory">
+						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.AppCategory">
 								<option>Ambience</option>
 								<option>Automation</option>
 								<option>Wellness</option>
@@ -1100,7 +1166,7 @@
 						<label>Type <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Type">
+						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Type">
 							<option>Action</option>
 							<option>Report</option>
 							<option>Condition</option>
@@ -1112,21 +1178,20 @@
 						<label>Description <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Description"/>
+						<input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Description"/>
 					</div>
 					<div class="field">
 						<label>Keywords <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select multiple="" class="ui fluid dropdown search" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Keywords"></select>
+						<select multiple="" class="ui fluid dropdown search" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Keywords"></select>
 					</div>
 				</div>
 
-				
 				<h4 class="ui dividing header">Contextual Constraints<span class="ui icon help" data-content="">
 					<i class="question circle icon"></i>
 				</span></h4>
-				
+
 				<div class="field">
 					<label>Concurrent<span class="ui icon help" data-content="">
 						<i class="question circle icon"></i>
@@ -1139,7 +1204,7 @@
 					</span></label>
 					<input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Contextual_Constraints.Time_Window"/>
 				</div>
-				
+
 				<div class="field">
 					<label>Usage Mode<span class="ui icon help" data-content="">
 						<i class="question circle icon"></i>
@@ -1150,10 +1215,7 @@
 							<option></option>
 					</select>
 				</div>
-				
-				
-				
-				
+
 				<h4 class="ui dividing header">Temporal Constraints <span class="ui icon help" data-content="">
 					<i class="question circle icon"></i>
 				</span></h4>
@@ -1170,15 +1232,15 @@
 								<td>Working <span class="ui icon help" data-content="">
 									<i class="question circle icon"></i>
 								</span></td>
-								<td><input type="text"/></td>
-								<td><input type="text"/></td>
+								<td><input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Temporal_Constraints.Working.StartTime"/></td>
+								<td><input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Temporal_Constraints.Working.EndTime"/></td>
 							</tr>
 							<tr>
 								<td>Callable <span class="ui icon help" data-content="">
 									<i class="question circle icon"></i>
 								</span></td>
-								<td><input type="text"/></td>
-								<td><input type="text"/></td>
+								<td><input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Temporal_Constraints.Callable.StartTime"/></td>
+								<td><input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Temporal_Constraints.Callable.EndTime"/></td>
 							</tr>
 						</tbody>
 					</table>
@@ -1209,7 +1271,7 @@
 						<label>Data Type <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_OutputType">
+						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.OutputType">
 							<option value="void">void</option>
 							<option value="int">integer</option>
 							<option value="float">floating point</option>
@@ -1219,7 +1281,7 @@
 					</div>
 					<div class="field">
 						<label>Description</label>
-						<input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_OutputDescription"/>
+						<input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.OutputDescription"/>
 					</div>
 				</div>
 
@@ -1227,22 +1289,100 @@
 					<i class="question circle icon"></i>
 				</span></h4>
 
-				<div class="field">
-<textarea class="editor" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Formula">
-// ~ Service body C code block ~
-// Input parameters are available as named above
-// Any return values should match the specified output type
-</textarea>
+				
+				<div class="functionality">
+					<div class="field">
+						<textarea class="editor" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Formula">
+						// ~ Service body C code block ~
+						// Input parameters are available as named above
+						// Any return values should match the specified output type
+						</textarea>
+					</div>
+
+					<div class="ui horizontal divider">or</div>
+
+					<div class="two fields">
+						<div class="field">
+							<label>Statement Generator</label>
+							<select class="update-statement ui fluid dropdown">
+								<option value="print_value">Print Value</option>
+								<option value="print_string">Print String</option>
+								<option value="DigitalWrite_High">Write Digital high (5 Volt)</option>
+								<option value="DigitalWrite_Low">Write Digital Low (0 Volt)</option>
+								<option value="Delay">Delay in milliseconds</option>
+								<option value="DigitalWrite_Blink">Blink digital Pin with delay</option>
+								<option value="AnalogWrite">Write analog value to an analog pin</option>
+								<option value="DigitalRead">Read the value from digital pin</option>
+								<option value="AnalogRead">Read the value from analog pin</option>
+								
+							</select>
+						</div>
+						<div class="field">
+							<label>&#160</label>
+							<div class="wide ui add-statement button">Insert Above</div>
+						</div>
+					</div>
+
+					<div class="statements">
+						<div class="field" data-statement="print_value">
+							<input id="print-value" type="text" placeholder="value or variable to Print"/>
+						</div>
+						
+						<div class="field" data-statement="print_string">
+							<input id="print-string" type="text" placeholder="String to Print"/>
+						</div>
+						
+						<div class="field" data-statement="DigitalWrite_High">
+							<input id="digitalwrite_high-pin" type="text" placeholder="GPIO Pin"/>
+						</div>
+						
+						<div class="field" data-statement="DigitalWrite_Low">
+							<input id="digitalwrite_low-pin" type="text" placeholder="GPIO Pin"/>
+						</div>
+						
+						<div class="field" data-statement="Delay">
+							<input id="Delay-value" type="text" placeholder="milliseconds"/>
+						</div>
+						
+						<div class="field" data-statement="DigitalRead">
+							<input id="DigitalRead-pin" type="text" placeholder="GPIO Pin"/>
+						</div>
+						
+						<div class="field" data-statement="AnalogRead">
+							<input id="AnalogRead-pin" type="text" placeholder="GPIO Pin"/>
+						</div>
+						
+						<div class="two fields" data-statement="DigitalWrite_Blink">
+							<div class="field">
+								<input id="DigitalWrite_Blink-pin" type="text" placeholder="GPIO Pin"/>
+							</div>
+							<div class="field">
+								<input id="DigitalWrite_Blink-delayValue" type="text" placeholder="Delay Value in milliseconds"/>
+							</div>
+						</div>
+						
+						<div class="two fields" data-statement="AnalogWrite">
+							<div class="field">
+								<input id="AnalogWrite-pin" type="text" placeholder="GPIO Pin"/>
+							</div>
+							<div class="field">
+								<input id="AnalogWrite-Value" type="text" placeholder="Analog value"/>
+							</div>
+						</div>
+						
+					</div>
 				</div>
 			</div>
-
+			
+			
+			
 			<table id="input-row">
 				<tbody><tr>
 					<td>
 						<i class="ui remove-row red icon close"></i> <i class="ui move-row blue icon sort"></i>
 					</td>
 					<td>
-						<div class="field"><select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Inputs.Input_*.Input_Type">
+						<div class="field"><select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Inputs.Input_*.Input_Type">
 							<option value="int">integer</option>
 							<option value="float">floating point</option>
 							<option value="const char*">string</option>
@@ -1250,7 +1390,7 @@
 						</select></div>
 					</td>
 					<td>
-						<div class="field"><input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Inputs.Input_*.Input_Description"></div>
+						<div class="field"><input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Inputs.Input_*.Input_Description"></div>
 					</td>
 				</tr></tbody>
 			</table>
@@ -1263,13 +1403,13 @@
 						<label>Name <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" class="name"/>
+						<input type="text" class="name" name="Atlas_Entity.Entity_*.UnboundedService.UB_*.Name"/>
 					</div>
 					<div class="field">
 						<label>Type <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown">
+						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.UnboundedService.UB_*.type">
 							<option>Action</option>
 							<option>Report</option>
 							<option>Condition</option>
@@ -1279,7 +1419,7 @@
 						<label>Match Value <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text"/>
+						<input type="text" name="Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchValue"/>
 					</div>
 				</div>
 
@@ -1292,13 +1432,13 @@
 						<label>Vendors <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select multiple="" class="ui fluid dropdown search"></select>
+						<select multiple="" class="ui fluid dropdown search" name="Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchVendor"></select>
 					</div>
 					<div class="field">
 						<label>Keywords <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select multiple="" class="ui fluid dropdown search"></select>
+						<select multiple="" class="ui fluid dropdown search" name="Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchKeywords"></select>
 					</div>
 				</div>
 			</div>
@@ -1306,71 +1446,69 @@
 			<div class="content delegate" id="relationship">
 				<h4 class="ui dividing header">Descriptive Metadata</h4>
 
-				<div class="four fields">
-					<div class="field">
+				<div class="fields">
+					<div class="four wide field">
 						<label>Name <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" class="name"/>
+						<input type="text" class="name" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Name"/>
 					</div>
-					<div class="field">
+					<div class="four wide field">
 						<label>Establisher <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text"/>
+						<input type="text" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Establisher"/>
 					</div>
-					<div class="field">
-						<label>Category <span class="ui icon help" data-content="">
+					<div class="eight wide field">
+						<label>Description <span class="ui icon help" data-content="">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown">
-							<option>Cooperative</option>
-							<option>Competitive</option>
-						</select>
+						<input type="text" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Description"/>
 					</div>
-					<div class="field">
-						<label>Type <span class="ui icon help" data-content="">
-							<i class="question circle icon"></i>
-						</span></label>
-						<select class="ui fluid dropdown">
-							<option>Contest</option>
-							<option>Subsume</option>
-							<option>Control</option>
-						</select>
-					</div>
-				</div>
-				<div class="field">
-					<label>Description <span class="ui icon help" data-content="">
-						<i class="question circle icon"></i>
-					</span></label>
-					<input type="text"/>
 				</div>
 
-				<h4 class="ui dividing header">Services <span class="ui icon help" data-content="">
+				<h4 class="ui dividing header">Behavior <span class="ui icon help" data-content="">
 					<i class="question circle icon"></i>
 				</span></h4>
 
-				<div class="two fields">
-					<div class="field">
-						<table class="ui white table src">
-							<thead><th>Available</th></thead>
-
-							<tbody><tr class="fixed">
-								<td><i>No services available.</i></td>
-							</tr></tbody>
-						</table>
+				<div class="behavior three fields">
+					<div class="kind field">
+						<label>&#160</label>
+						<select class="update-relationship ui fluid dropdown">
+							<option value="control">Control</option>
+							<option value="drive">Drive</option>
+							<option value="support">Support</option>
+							<option value="extend">Extend</option>
+							<option value="contest">Contest</option>
+							<option value="interfere">Interfere</option>
+						</select>
 					</div>
-					<div class="field">
-						<table class="ui white table dst">
-							<thead><th>Active</th></thead>
 
-							<tbody><tr class="fixed">
-								<td><i>Drag available services here.</i></td>
-							</tr></tbody>
-						</table>
+					<div class="this field">
+						<label data-kind="control">IF</label>
+						<label data-kind="drive">USE</label>
+						<label data-kind="support">BEFORE</label>
+						<label data-kind="extend">DO</label>
+						<label data-kind="contest">PREFER USING</label>
+						<label data-kind="interfere">DO NOT DO</label>
+
+						<select class="ui fluid dropdown">
+							<option value="">select 'this' service</option>
+						</select>
+					</div>
+					<div class="that field">
+						<label data-kind="control">THEN</label>
+						<label data-kind="drive">TO DO</label>
+						<label data-kind="support">CHECK ON</label>
+						<label data-kind="extend">WHILE DOING</label>
+						<label data-kind="contest">OVER</label>
+						<label data-kind="interfere">IF DOING</label>
+
+						<select class="ui fluid dropdown">
+							<option value="">select 'that' service</option>
+						</select>
 					</div>
 				</div>
-			</div>
 
 			<table id="service-row">
 				<tbody><tr class="choose">
