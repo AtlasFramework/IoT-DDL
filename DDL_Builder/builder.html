@@ -54,8 +54,11 @@
 				parent.find('.ui.menu .item').tab();
 
 				let editor_node = parent.find('.editor');
-				if (editor_node.length)
+				if (editor_node.length) {
+					let name = editor_node.attr('name');
 					ace.edit(editor_node[0]).session.setMode('ace/mode/c_cpp');
+					parent.find('.ace_editor > textarea').attr('name', name);
+				}
 
 				setupForm();
 			};
@@ -104,7 +107,6 @@
 
 			let setupInputRows = function (sid) {
 				let table  = sections.service.elements[sid].find('table.inputs > tbody');
-				console.log(table);
 				let params = { animation: 150, filter: '.fixed' };
 
 				sections.service.sorters[sid] = Sortable.create(table[0], params);
@@ -182,6 +184,15 @@
 				return title;
 			};
 
+			let finalizeEditors = function(e) {
+				let editors = $('.ace_editor').each(function() {
+					let editor = $(this);
+					let code   = ace.edit(editor[0]);
+
+					$(e.target).form('set value', editor.find('textarea').attr('name'), code.getValue());
+				});
+			}
+
 			let toObject = function(flatvalues) {
 				let obj = {};
 				for (let key in flatvalues) {
@@ -222,6 +233,9 @@
 						ss[s]['Service_InputDescriptions'] = descs;
 
 						delete ss[s]['Service_Inputs'];
+
+						let code = ss[s]['Service_Formula'];
+						ss[s]['Service_Formula'] = '<![CDATA[\n' + code + '\n]]>';
 					}
 				}
 			};
@@ -398,9 +412,7 @@
 					row.remove();
 					updateDefault(parent);
 				});
-			
-				
-				
+
 				$('.delegate').on('click', '.ui.add-statement', function (e) {
 					let parent = $(this).closest('.functionality');
 
@@ -409,72 +421,56 @@
 						case 'print_value':
 							code = `print(${parent.find('#print-value').val()});`;
 							break;
-						
+
 						case 'print_string':
 							code = `print("${parent.find('#print-string').val()}");`;
 							break;
-							
+
 						case 'DigitalWrite_High':
 							code = `DigitalWrite_High(${parent.find('#digitalwrite_high-pin').val()});`;
 							break;
-						
+
 						case 'DigitalWrite_Low':
 							code = `DigitalWrite_Low(${parent.find('#digitalwrite_low-pin').val()});`;
 							break;
-							
+
 						case 'Delay':
 							code = `Delay(${parent.find('#Delay-value').val()});`;
 							break;
-							
+
 						case 'DigitalWrite_Blink':
 							code = `DigitalWrite_Blink(${parent.find('#DigitalWrite_Blink-pin').val()}, ${parent.find('#DigitalWrite_Blink-delayValue').val()});`;
 							break;
-							
-							
+
+
 						case 'AnalogWrite':
 							code = `AnalogWrite(${parent.find('#AnalogWrite-pin').val()}, ${parent.find('#AnalogWrite-Value').val()});`;
 							break;
-							
-							
+
+
 						case 'DigitalRead':
 							code = `int value = DigitalRead(${parent.find('#DigitalRead-pin').val()});`;
 							break;
-							
-							
+
+
 						case 'AnalogRead':
 							code = `int value = AnalogRead(${parent.find('#AnalogRead-pin').val()});`;
 							break;
-							
+
 					}
 
 					if (code === undefined)
 						return;
 
 					let editor = ace.edit(parent.find('.ace_editor')[0]);
-					console.log( parent.find('.ace_editor'));
 					editor.setValue(editor.getValue() + '\n' + code);
 				});
-				
-				
-				
-				
-				
 
 				let rules = $.fn.form.settings.rules;
 				rules.ip   = function(v) { return (v == '' || rules.regExp(v, /^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/)); };
 				rules.port = function(v) { return (v == '' || rules.integer(v, '0..65535')); };
-				rules.when = function(v, i) {
-					if (v)
-						return true;
-
-					field = $(`[data-validate="${i}"`);
-					if (field.length == 0)
-						return true;
-
-					if (field.val() == 0)
-						return true;
-
-					return false;
+				rules.code = function(v) {
+					//
 				};
 
 				setupForm($('#ddl-form'), {
@@ -485,6 +481,8 @@
 						'Atlas_Thing.Administrative_Metadata.Network_Manager.OMA-DM_Port' : 'port'
 					},
 					onSuccess: function (e) {
+						finalizeEditors(e);
+
 						let values = $(e.target).form('get values');
 
 						let ddl = toObject(values);
@@ -1289,14 +1287,14 @@
 					<i class="question circle icon"></i>
 				</span></h4>
 
-				
+
 				<div class="functionality">
 					<div class="field">
-						<textarea class="editor" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Formula">
-						// ~ Service body C code block ~
-						// Input parameters are available as named above
-						// Any return values should match the specified output type
-						</textarea>
+<textarea class="editor" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Formula">
+// ~ Service body C code block ~
+// Input parameters are available as named above
+// Any return values should match the specified output type
+</textarea>
 					</div>
 
 					<div class="ui horizontal divider">or</div>
@@ -1314,7 +1312,7 @@
 								<option value="AnalogWrite">Write analog value to an analog pin</option>
 								<option value="DigitalRead">Read the value from digital pin</option>
 								<option value="AnalogRead">Read the value from analog pin</option>
-								
+
 							</select>
 						</div>
 						<div class="field">
@@ -1327,31 +1325,31 @@
 						<div class="field" data-statement="print_value">
 							<input id="print-value" type="text" placeholder="value or variable to Print"/>
 						</div>
-						
+
 						<div class="field" data-statement="print_string">
 							<input id="print-string" type="text" placeholder="String to Print"/>
 						</div>
-						
+
 						<div class="field" data-statement="DigitalWrite_High">
 							<input id="digitalwrite_high-pin" type="text" placeholder="GPIO Pin"/>
 						</div>
-						
+
 						<div class="field" data-statement="DigitalWrite_Low">
 							<input id="digitalwrite_low-pin" type="text" placeholder="GPIO Pin"/>
 						</div>
-						
+
 						<div class="field" data-statement="Delay">
 							<input id="Delay-value" type="text" placeholder="milliseconds"/>
 						</div>
-						
+
 						<div class="field" data-statement="DigitalRead">
 							<input id="DigitalRead-pin" type="text" placeholder="GPIO Pin"/>
 						</div>
-						
+
 						<div class="field" data-statement="AnalogRead">
 							<input id="AnalogRead-pin" type="text" placeholder="GPIO Pin"/>
 						</div>
-						
+
 						<div class="two fields" data-statement="DigitalWrite_Blink">
 							<div class="field">
 								<input id="DigitalWrite_Blink-pin" type="text" placeholder="GPIO Pin"/>
@@ -1360,7 +1358,7 @@
 								<input id="DigitalWrite_Blink-delayValue" type="text" placeholder="Delay Value in milliseconds"/>
 							</div>
 						</div>
-						
+
 						<div class="two fields" data-statement="AnalogWrite">
 							<div class="field">
 								<input id="AnalogWrite-pin" type="text" placeholder="GPIO Pin"/>
@@ -1369,13 +1367,11 @@
 								<input id="AnalogWrite-Value" type="text" placeholder="Analog value"/>
 							</div>
 						</div>
-						
+
 					</div>
 				</div>
 			</div>
-			
-			
-			
+
 			<table id="input-row">
 				<tbody><tr>
 					<td>
