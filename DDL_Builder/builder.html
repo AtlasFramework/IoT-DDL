@@ -511,8 +511,10 @@
 			<div class="ui container">
 				<h1 class="ui header center">Atlas IoT-DDL Builder Tool (v1.0)</h1>
 				<h2 class="ui header center">Configure your Atlas Thing, Resources, and Services using the IoT-DDL description language</h2>
+				<br>
 				<h3 class="ui header center"><i>The IoT-DDL configuration file is divided into segments, click on each segment below to learn more about the different configurations for your thing!</i></h3>
-
+				<br>
+				<br>
 				<div class="ui top attached tabular menu">
 					<a class="active item" data-tab="desc">Descriptive Metadata</a>
 					<a class="item" data-tab="struct">Structural and Administrative Metadata</a>
@@ -520,120 +522,156 @@
 					<a class="item" data-tab="attach">Thing Attachments</a>
 				</div>
 
+				
+				<!--------------------------------------------------------------------------------------------------->
+				<!-----------------------------The descriptive meta-data of Atlas thing------------------------------>
+				<!--------------------------------------------------------------------------------------------------->
+				
 				<div class="ui bottom attached active tab segment" data-tab="desc">
+					
 					<h4 class="ui dividing header">Thing Information</h4>
 
 					<div class="two fields">
 						<div class="field required">
-							<label>ID <span class="ui icon help" data-content="A unique identifier for the thing; a combination of characters and digits.">
+							<label>ID <span class="ui icon help" data-content="A unique identifier for your Atlas thing; a combination of characters and digits (e.g., AT_SmartLamp23).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ATID"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ATID" placeholder="place a unique identifier to your thing"/>
 						</div>
+						
 						<div class="field">
-							<label>Name <span class="ui icon help" data-content="A descriptive name for your smart thing.">
+							<label>Name <span class="ui icon help" data-content="What is your Atlas thing? (e.g., Smart Lamp, DVD Player).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Name"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Name" placeholder="add a short name to your thing"/>
 						</div>
 					</div>
+					
 					<div class="four fields">
+					
 						<div class="field">
-							<label>Vendor <span class="ui icon help" data-content="The vendor of your smart thing, e.g. Samsung, Wemo.">
+							<label>Owner <span class="ui icon help" data-content="Who is owner of your smart thing? (e.g., yourself, your company, your university).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Vendor"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Owner" placeholder="identify who owns this thing"/>
 						</div>
+					
 						<div class="field">
-							<label>Model <span class="ui icon help" data-content="The model of your device, e.g. Samsung S8+.">
+							<label>Vendor <span class="ui icon help" data-content="Who is vendor of your smart thing? (e.g., Samsung, Wemo, or your are the vendor).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Model"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Vendor" placeholder="identify the vendor of your thing"/>
 						</div>
+						
 						<div class="field">
-							<label>Owner <span class="ui icon help" data-content="The owner of the device, your name.">
+							<label>Model <span class="ui icon help" data-content="What is the model of this thing? (e.g., Samsung S8+, WeMo 2nd Gen).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Owner"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Model"  placeholder="identify the model of your thing"/>
 						</div>
+						
 						<div class="field">
-							<label>Release Date <span class="ui icon help" data-content="The date you developed the IoT-DDL.">
+							<label>Release Date <span class="ui icon help" data-content="What is the release month/year of your smart thing?">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ReleaseDate"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ReleaseDate" value="8/2020"/>
 						</div>
 					</div>
-					<div class="three fields">
-						<div class="field">
+					
+					
+					
+					<div class="field">
 							<label>Type <span class="ui icon help" data-content="Is your thing is an Edge device, sofware application, or other?">
 								<i class="question circle icon"></i>
 							</span></label>
 							<select class="ui fluid dropdown" name="Atlas_Thing.Descriptive_Metadata.Thing_Type">
-								<option>Bit Thing</option>
-								<option>Soft Thing</option>
-								<option>Thing of Things</option>
-								<option>Powerful Thing</option>
-								<option>Edge Thing</option>
+								<option value="" disabled selected>Select the type of your thing</option>
+								<option value="Bit Thing">Bit Thing (e.g., simple sensor, actuator, RFID/NFC tag, BLE beacon)</option>
+								<option value="Soft Thing">Soft Thing (e.g., Desktop App, mobile App, script, tool, library)</option>
+								<option value="Thing of Things">Platform Thing (e.g., Arduino, Libelium, Beaglebone, Raspberry Pi)</option>
+								<option value="Thing of Things">Sensor Mote Thing (e.g., WiSense, MICA)</option>
+								<option value="Powerful Thing">Low-end Platform (e.g., Smartphone, Smart watch, tablet, Google Glass, Domestic Robot)</option>
+								<option value="Powerful Thing">High-end Platform (e.g., Home Appliance, RFID Reader, Traffic System, Smart Car)</option>
+								<option value="Edge Thing">Edge Thing (e.g., Computing terminal, Server, Set-top box, Data warehouse)</option>
 							</select>
-						</div>
-						<div class="field">
-							<label>Operating System <span class="ui icon help" data-content="The operating system that runs your smart thing.">
+					</div>
+					
+					
+					<div class="field">
+							<label>Operating System <span class="ui icon help" data-content="What is the operating system that runs your thing? (e.g., Raspberry Linux for Raspberry Pi, Android for Smartphone).">
 								<i class="question circle icon"></i>
 							</span></label>
 							<select class="ui fluid dropdown" name="Atlas_Thing.Descriptive_Metadata.Thing_OperatingSystem">
-								<option>Debian - Linux</option>
-								<option>Raspbian - Linux</option>
-								<option>Android - Linux</option>
-								<option>mbed - mbedOS</option>
+								<option value="" disabled selected>Select the operating system/kernel that runs your thing</option>
+								<option value="Raspbian"> Raspberry Linux (e.g., Raspberry Pi Model B, Raspberry Pi Model A) </option>
+								<option value="mbedOS"> mbedOS (e.g., ARM-based platforms)</option>
+								<option value="Debian"> Debian Linux (e.g., Beaglebone)</option>
+								<option value="Android"> Android (e.g., Android Smartphone, Android Tablet)- mbedOS</option>
+								<option value="Arduino"> Arduino kernel (e.g., Arduino Uno, Libelium)</option>
 							</select>
-						</div>
-						<div class="field">
-							<label>OS Version <span class="ui icon help" data-content="The version of the selected OS, e.g., Ubuntu 14.0.4.">
-								<i class="question circle icon"></i>
-							</span></label>
-							<input type="text"/>
-						</div>
 					</div>
+					
 					<div class="field">
 						<label>Description <span class="ui icon help" data-content="A short description for the function of your thing.">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ShortDescription"/>
+						<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ShortDescription"  placeholder="add a short description on the nature your thing"/>
 					</div>
+					
 					<div class="field">
 						<label>Comments <span class="ui icon help" data-content="Describe your thing in more detail.">
 							<i class="question circle icon"></i>
 						</span></label>
-						<textarea></textarea>
+						<textarea  placeholder="add more comments describing your thing"></textarea>
 					</div>
-
-					<h4 class="ui dividing header">Space Information</h4>
+					
+					
+					<br>
+					<h4  class="ui header center"><i>once you describe your thing, use the following dialogs to describe where you deploy your thing</i></h4>
+					<br>
+					
+					
+				
+					<h4 class="ui dividing header">Smart Space Information</h4>
 
 					<div class="two fields">
 						<div class="field required">
-							<label>ID <span class="ui icon help" data-content="A unique identifier for your smart space; this is a common to all devices in the same smart space.">
+							<label>ID <span class="ui icon help" data-content="A unique identifier for your smart space where you deploy the thing; a combination of characters and digits (e.g., ST_Living345). this is a common to all devices in the same smart space.">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_SSID"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_SSID" placeholder="place a unique identifier to your smart space"/>
 						</div>
 						<div class="field">
-							<label>Coordinates <span class="ui icon help" data-content="The GPS coordinates of your smart space: LAX, LAT.">
+							<label>Coordinates <span class="ui icon help" data-content="The approximated GPS coordinates of your smart space: LAX, LAT.">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Coordinates"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Coordinates" placeholder="provide the GPS coordinates of your smart space (e.g., 41.9, -87.7)"/>
 						</div>
 					</div>
+					
 					<div class="field">
-						<label>Description <span class="ui icon help" data-content="A short description of your smart space (e.g., Bedroom, living-room, classroom).">
+							<label>Name <span class="ui icon help" data-content="What is your smart space? (e.g., living Room, Kitchen).">
+								<i class="question circle icon"></i>
+							</span></label>
+							<select class="ui fluid dropdown" name="Atlas_Thing.Descriptive_Metadata.Space_Name">
+								<option value="" disabled selected>Select the name of location you deploy your thing</option>
+								<option value="Bedroom">Bedroom</option>
+								<option value="Living Room">Living Room</option>
+								<option value="Office">Office</option>
+								<option value="Kitchen">Kitchen</option>
+								<option value="Classroom">Classroom</option>
+							</select>
+					</div>
+					
+					<div class="field">
+						<label>Description <span class="ui icon help" data-content="Provide a short description of your smart space (e.g., master bedroom of the house).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Description"/>
+						<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Description"   placeholder="add a short description on the smart space"/>
 					</div>
-
-					<h4 class="ui dividing header">Characteristics</h4>
-
+					
 					<div class="field">
-						<label>Space Constraints <span class="ui icon help" data-content="">
+						<label>Space Constraints <span class="ui icon help" data-content="define the environmental/physical constraints your thing needs from the smart space for a safe operation (e.g., the minimum and maximum temperature of the smart space to accommodate your thing)">
 							<i class="question circle icon"></i>
 						</span></label>
 						<table class="ui compact white definition table">
@@ -643,107 +681,149 @@
 								<th>Upper Bound</th>
 							</thead>
 							<tbody>
-								<tr><td>Temperature</td><td><input type="text" name="Atlas_Thing.Space_Constraints.Temperature.Lower_Bound"/></td>
-								    <td><input type="text" name="Atlas_Thing.Space_Constraints.Temperature.Upper_Bound"/></td></tr>
-								<tr><td>Humidity</td><td><input type="text" name="Atlas_Thing.Space_Constraints.Humidity.Lower_Bound"/></td>
-								    <td><input type="text" name="Atlas_Thing.Space_Constraints.Humidity.Upper_Bound"/></td></tr>
-								<tr><td>Voltage</td><td><input type="text" name="Atlas_Thing.Space_Constraints.Voltage.Lower_Bound"/></td>
-								    <td><input type="text" name="Atlas_Thing.Space_Constraints.Voltage.Upper_Bound"/></td></tr>
+								<tr><td>Temperature</td>
+								
+									<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Temperature.Lower_Bound" placeholder="10C"/></td>
+								    <td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Temperature.Upper_Bound" placeholder="35C"/></td></tr>
+								
+								<tr><td>Humidity</td>
+									<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Humidity.Lower_Bound" placeholder="10%"/></td>
+								    <td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Humidity.Upper_Bound" placeholder="40%"/></td></tr>
+								
+								<tr><td>Voltage</td>
+									<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Voltage.Lower_Bound" placeholder="110V"/></td>
+								    <td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Voltage.Upper_Bound" placeholder="220V"/></td></tr>
 							</tbody>
 						</table>
 					</div>
-
+					
 					<div class="two fields">
 						<div class="field">
-							<label>Radio Interference Radius <span class="ui icon help" data-content="">
+							<label>Radio Interference Radius <span class="ui icon help" data-content="if your thing uses radio waves for operation, define the radio radius to avoid interference with other devices in the smart space">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Space_Constraints.Radio_Interference_Radius"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Radio_Interference_Radius" placeholder="0"/>
 						</div>
 						<div class="field">
-							<label>Safe Temperature Radius <span class="ui icon help" data-content="">
+							<label>Safe Temperature Radius <span class="ui icon help" data-content="if your thing produces heat when turned on, define the heat radius to avoid interference with other devices in the smart space">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Space_Constraints.Safe_Temperature_Radius"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Safe_Temperature_Radius" placeholder="0"/>
 						</div>
 					</div>
 
 				</div>
 
+				
+				
+				
+				
+				
+				<!--------------------------------------------------------------------------------------------------->
+				<!---------------The structural and administrative meta-data of Atlas thing-------------------------->
+				<!--------------------------------------------------------------------------------------------------->
+				
+				
+				
 				<div class="ui bottom attached tab segment" data-tab="struct">
+				
 					<h4 class="ui dividing header">Network Module</h4>
 
-					<div class="three fields">
+					<div class="two fields">
+					
 						<div class="field">
-							<label>Type <span class="ui icon help" data-content="">
-								<i class="question circle icon"></i>
-							</span></label>
-							<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Type">
-								<option>Built-In</option>
-								<option>Attached</option>
-							</select>
-						</div>
-						<div class="field">
-							<label>Technology <span class="ui icon help" data-content="">
+							<label>Technology <span class="ui icon help" data-content="Which network module is equipped by your thing? (e.g., WiFi, Bluetooth).">
 								<i class="question circle icon"></i>
 							</span></label>
 							<select class="ui fluid dropdown" id="update-network" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Module">
-								<option>WiFi</option>
-								<option>Ethernet</option>
-								<option>BLE</option>
+								<option value="" disabled selected>Select the network technology or module</option>
+								<option value="Wifi">WiFi (your thing has a wireless connection to the router</option>
+								<option value="Ethernet">Ethernet (your thing has a wired connected to the router)</option>
+								<option value="Bluetooth">Bluetooth</option>
+								<option value="BLE">Bluetooth Low Energy</option>
 							</select>
 						</div>
 						<div class="field">
-							<label>Communication Protocol <span class="ui icon help" data-content="">
+							<label>Type <span class="ui icon help" data-content="What is the type of such network module? (e.g., build in module to your thing).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Communication_Protocol">
-								<option>REST</option>
-								<option>MQTT</option>
-								<option>CoAP</option>
-								<option>TCP/IP Sockets</option>
+							<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Type">
+								<option value="" disabled selected>Select the type of network module</option>
+								<option value="Built-In">Built-In on your thing</option>
+								<option value="Attached">Attached to your thing</option>
 							</select>
 						</div>
 					</div>
+					
+					
 					<div class="two fields" id="network-fields">
 						<div class="field">
-							<label>Network Name (SSID) <span class="ui icon help" data-content="">
+							<label>Network Name (SSID) <span class="ui icon help" data-content="In case you select Wifi, provide the name of your network (e.g., the name of your home Wifi)">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Network_Name"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Network_Name" placeholder="place the name of network to join"/>
 						</div>
 						<div class="field">
-							<label>Network Password (PSK) <span class="ui icon help" data-content="">
+							<label>Network Password (PSK) <span class="ui icon help" data-content="In case you select Wifi, provide the passcode of your network (e.g., the passcode of your home Wifi)">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="password" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Network_Passcode"/>
+							<input type="password" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Network_Passcode"  placeholder="place the passcode of network to join"/>
 						</div>
 					</div>
-
-					<h4 class="ui dividing header">Inter-Operable Communication Framework</h4>
-
-					<div class="three fields">
-						<div class="field">
-							<label>Broker Vendor <span class="ui icon help" data-content="">
-								<i class="question circle icon"></i>
-							</span></label>
-							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Vendor"/>
-						</div>
-						<div class="field">
-							<label>Broker URL <span class="ui icon help" data-content="">
-								<i class="question circle icon"></i>
-							</span></label>
-							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.URL"/>
-						</div>
-						<div class="field">
-							<label>Broker Dashboard <span class="ui icon help" data-content="">
-								<i class="question circle icon"></i>
-							</span></label>
-							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Dashboard"/>
-						</div>
-					</div>
+					
 					<div class="field">
-						<label>Topics <span class="ui icon help" data-content="">
+						<label>Communication Protocol <span class="ui icon help" data-content="Which communication protocol does your thing use for communication? (e.g., REST-HTTP).">
+							<i class="question circle icon"></i>
+						</span></label>
+						<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Communication_Protocol">
+							<option value="" disabled selected>Select the communication protocol your thing use</option>
+							<option value="REST-HTTP"> REST: Representational state transfer HTTP</option>
+							<option value="MQTT">MQTT: Message Queuing Telemetry Transport</option>
+							<option value="CoAP">CoAP: Constrained Application Protocol</option>
+							<option value="Sockets"> TCP/IP Sockets</option>
+						</select>
+					</div>
+					
+					<br>
+					<h4  class="ui header center"><i>use the following dialog for your thing, through our protocol translator, to communicate with other things that use different technologies, protocols, and modules</i></h4>
+					<br>
+					
+					<h4 class="ui dividing header">Inter-Operable Communication</h4>
+
+					<div class="two fields">
+						<div class="field">
+							<label>Broker Vendor <span class="ui icon help" data-content="The vendor of the global/local broker to enable the inter-operable communication between things">
+								<i class="question circle icon"></i>
+							</span></label>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Vendor" value="HiveMQ"/>
+						</div>
+						<div class="field">
+							<label>Broker Dashboard <span class="ui icon help" data-content="The online dashboard of the global/local broker if existed">
+								<i class="question circle icon"></i>
+							</span></label>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Dashboard" value="http://www.mqtt-dashboard.com/"/>
+						</div>
+					</div>
+					
+					
+					<div class="two fields">
+						<div class="field">
+							<label>Broker IP <span class="ui icon help" data-content="The Internet address (IP) of the global or local broker for the inter-operable communication">
+								<i class="question circle icon"></i>
+							</span></label>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.IP" value="broker.hivemq.com"/>
+						</div>
+						<div class="field">
+							<label>Broker Port <span class="ui icon help" data-content="The Port address of the global or local broker for the inter-operable communication">
+								<i class="question circle icon"></i>
+							</span></label>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Port" value="1883"/>
+						</div>
+						
+					</div>
+					
+					<div class="field">
+						<label>Topics <span class="ui icon help" data-content="The different topics through which things and protocol translators can communicate to enable inter-operable communication">
 							<i class="question circle icon"></i>
 						</span></label>
 
@@ -753,72 +833,95 @@
 								<th>Path</th>
 							</thead>
 							<tbody>
-								<tr><td>Root</td><td><input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Topic_Root" value="/Atlas"/></td></tr>
-								<tr><td>Network MQTT Client</td><td><input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Topic_Network_MQTTClient" value="/Network/MQTT_Client"/></td></tr>
-								<tr><td>Network Private Broker</td><td><input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Topic_Network_PrivateBroker" value="/Network/Private_Broker"/></td></tr>
-								<tr><td>Multicast Thing Identity</td><td><input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Topic_Multicast_ThingIdentity" value="/Multicast/Tweet_ThingIdentity"/></td></tr>
-								<tr><td>Multicast Entity Identity</td><td><input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Topic_Multicast_EntityIdentity" value="/Multicast/Tweet_EntityIdentity"/></td></tr>
-								<tr><td>Multicast API</td><td><input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Topic_Multicast_API" value="/Multicast/API"/></td></tr>
-								<tr><td>Unicast</td><td><input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Topic_Unicast" value="/Unicast/Interaction"/></td></tr>
+								<tr><td>Root</td><td>						<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Root" 						value="/Atlas"/></td></tr>
+								<tr><td>Network MQTT Client</td><td>		<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Network_MQTTClient" 			value="/Network/MQTT_Client"/></td></tr>
+								<tr><td>Network Private Broker</td><td>		<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Network_PrivateBroker" 		value="/Network/Private_Broker"/></td></tr>
+								<tr><td>Multicast Thing Identity</td><td>	<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Multicast_ThingIdentity" 		value="/Multicast/Tweet_ThingIdentity"/></td></tr>
+								<tr><td>Multicast Entity Identity</td><td>	<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Multicast_EntityIdentity" 	value="/Multicast/Tweet_EntityIdentity"/></td></tr>
+								<tr><td>Multicast API</td><td>				<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Multicast_API" 				value="/Multicast/API"/></td></tr>
+								<tr><td>Unicast</td><td>					<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Unicast" 						value="/Unicast/Interaction"/></td></tr>
 							</tbody>
 						</table>
 					</div>
 
-					<h4 class="ui dividing header">Device Management Server</h4>
+					<br>
+					<h4  class="ui header center"><i>use the following dialog to enable the remote management, using OMA-DM LwM2M protocol, for your thing</i></h4>
+					<br>
+					
+					<h4 class="ui dividing header">Device Management (DM)</h4>
 
 					<div class="fields">
 						<div class="eight wide field">
-							<label>Access Name <span class="ui icon help" data-content="">
+							<label>Vendor <span class="ui icon help" data-content="The vendor of the global or local device management server">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA_DM.AccessName"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA_DM.AccessName" value="Eclipse Leshan"/>
 						</div>
 						<div class="four wide field">
-							<label>IP Address <span class="ui icon help" data-content="">
+							<label>IP Address <span class="ui icon help" data-content="The Internet address (IP) of the global or local device management server">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA-DM.IP"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA_DM.IP" value="coap://leshan.eclipseprojects.io"/>
 						</div>
 						<div class="four wide field">
-							<label>Port <span class="ui icon help" data-content="">
+							<label>Port <span class="ui icon help" data-content="The Port address of the global or local device management server">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA-DM.Port"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA_DM.Port" value="5683"/>
 						</div>
 					</div>
 
+					
+					
+					
 					<h4 class="ui dividing header">Memory Units</h4>
 
 					<div class="three fields">
 						<div class="field">
-							<label>Storage Format <span class="ui icon help" data-content="">
+							<label>Storage Format <span class="ui icon help" data-content="Select the format to store data and information on thing ">
 								<i class="question circle icon"></i>
 							</span></label>
 							<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Memory_Manager.Store_Format">
+								<option value="" disabled selected>Select the storage format</option>
 								<option>Binary</option>
 								<option>Plaintext</option>
 							</select>
 						</div>
 						<div class="field">
-							<label>Application Storage <span class="ui icon help" data-content="">
+							<label>Application Storage <span class="ui icon help" data-content="Select the storage unit to store IoT application/recipes on thing">
 								<i class="question circle icon"></i>
 							</span></label>
 							<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Memory_Manager.MemoryUnit_Application">
+								<option value="" disabled selected>Select the storage unit</option>
 								<option>RAM</option>
 								<option>Flash</option>
 							</select>
 						</div>
 						<div class="field">
-							<label>Knowledge Storage <span class="ui icon help" data-content="">
+							<label>Knowledge Storage <span class="ui icon help" data-content="Select the storage unit to store IoT knowledge either received from the uploaded IoTDDL or received from other things in the smart space through tweets">
 								<i class="question circle icon"></i>
 							</span></label>
 							<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Memory_Manager.MemoryUnit_Knowledge">
+								<option value="" disabled selected>Select the storage unit</option>
 								<option>RAM</option>
 								<option>Flash</option>
 							</select>
 						</div>
 					</div>
 				</div>
+				
+				
+				
+				
+				<!--------------------------------------------------------------------------------------------------->
+				<!-----------------------------------------Entities of Atlas thing----------------------------------->
+				<!--------------------------------------------------------------------------------------------------->
+				
+				
+				
+				
+				
+				
 
 				<div class="ui bottom attached tab segment delegate" data-tab="entity">
 					<div class="ui fluid styled accordion" data-section="entity">
@@ -829,6 +932,14 @@
 					<div class="ui add-section button" data-target="entity">Add an Entity</div>
 				</div>
 
+				
+				
+				<!--------------------------------------------------------------------------------------------------->
+				<!--------------------------------------Attachments of Atlas thing----------------------------------->
+				<!--------------------------------------------------------------------------------------------------->
+				
+				
+				
 				<div class="ui bottom attached tab segment" data-tab="attach">
 					<div class="ui fluid styled accordion">
 						<div class="subcontrol title">
@@ -1031,6 +1142,14 @@
 				</div></a>
 			</div>
 		</div>
+		
+		
+	
+				<!--------------------------------------------------------------------------------------------------->
+				<!-----------------------------------------Entities of Atlas thing----------------------------------->
+				<!--------------------------------------------------------------------------------------------------->		
+		
+		
 
 		<div id="templates">
 			<div class="title" id="section-title">
@@ -1044,63 +1163,90 @@
 			</div>
 
 			<div class="content delegate" id="entity">
-				<h4 class="ui dividing header">Descriptive Metadata</h4>
+				<h4 class="ui dividing header">Entity information</h4>
 
 				<div class="two fields">
 					<div class="field required">
-						<label>ID <span class="ui icon help" data-content="">
+						<label>ID <span class="ui icon help" data-content="A unique identifier for this entity within your thing; a combination of characters and digits (e.g., E_Sensor23).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.ID"/>
+						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.ID" placeholder="place a unique identifier to this entity"/>
 					</div>
 					<div class="field">
-						<label>Name <span class="ui icon help" data-content="">
+						<label>Name <span class="ui icon help" data-content="What is this entity? (e.g., sensor, actuator).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" class="name" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Name"/>
+						<input type="text" class="name" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Name" placeholder="add a short name to this entity"/>
 					</div>
 				</div>
+				
+				
 				<div class="four fields">
 					<div class="field">
-						<label>Owner <span class="ui icon help" data-content="">
+						<label>Owner <span class="ui icon help" data-content="Who is owner of this entity? (e.g., yourself, your company, your university)">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Owner"/>
+						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Owner" placeholder="identify who owns this entity"/>
 					</div>
 					<div class="field">
-						<label>Vendor <span class="ui icon help" data-content="">
+						<label>Vendor <span class="ui icon help" data-content="Who is vendor of this entity? (e.g., Samsung, Wemo, or your are the vendor).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Vendor"/>
+						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Vendor" placeholder="identify the vendor of this entity"/>
 					</div>
+					
 					<div class="field">
-						<label>Category <span class="ui icon help" data-content="">
+						<label>Category <span class="ui icon help" data-content="Is it a hardware entity?, or a software one?">
 							<i class="question circle icon"></i>
 						</span></label>
 						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Category">
-							<option>Software</option>
-							<option>Hardware</option>
-							<option>Hybrid</option>
+							<option value="" disabled selected>Select the category of this entity</option>
+							<option value="Software">Software (e.g., library, script)</option>
+							<option value="Hardware">Hardware (e.g., sensor, actuator)</option>
+							<option value="Hybrid">Hybrid</option>
 						</select>
 					</div>
 					<div class="field">
-						<label>Type <span class="ui icon help" data-content="">
+						<label>Type <span class="ui icon help" data-content="From the category of this entity, what is the type?">
 							<i class="question circle icon"></i>
 						</span></label>
 						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Type">
+							<option value="" disabled selected>Select the type of this entity</option>
 							<option>Built-In</option>
 							<option>Connected</option>
 							<option>Remote</option>
 						</select>
 					</div>
 				</div>
+				
 				<div class="field">
-					<label>Description <span class="ui icon help" data-content="">
+					<label>Description <span class="ui icon help" data-content="Provide a short description of this entity.">
 						<i class="question circle icon"></i>
 					</span></label>
-					<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Description"/>
+					<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Description" placeholder="add a short description on this entity"/>
 				</div>
 
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				<h4 class="ui dividing header">Services</h4>
 
 				<div class="fluid accordion" data-section="service">
