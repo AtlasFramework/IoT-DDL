@@ -213,7 +213,7 @@
 				return obj;
 			};
 			let repairInputs = function(obj) {
-				let es = obj['Atlas_Entity'];
+				let es = obj['Atlas_Thing.Atlas_Entity'];
 				for (let e in es) {
 					let ss = es[e]['Resource_Service'];
 					for (let s in ss) {
@@ -229,8 +229,8 @@
 							descs += (descs == '') ? `"${d}"` : `,"${d}"`;
 						}
 
-						ss[s]['Service_InputTypes'] = types;
-						ss[s]['Service_InputDescriptions'] = descs;
+						//ss[s]['Service_InputTypes'] = types;
+						//ss[s]['Service_InputDescriptions'] = descs;
 
 						delete ss[s]['Service_Inputs'];
 
@@ -520,6 +520,7 @@
 					<a class="item" data-tab="struct">Structural and Administrative Metadata</a>
 					<a class="item" data-tab="entity">Entities, Services, and Relationships</a>
 					<a class="item" data-tab="attach">Thing Attachments</a>
+					<a class="item" data-tab="help" style="color: #dd581f;"><b>HELP ! ... </b> <i> a step-by-step guide</i></a>
 				</div>
 
 				
@@ -910,29 +911,20 @@
 					</div>
 				</div>
 				
-				
-				
-				
 				<!--------------------------------------------------------------------------------------------------->
 				<!-----------------------------------------Entities of Atlas thing----------------------------------->
 				<!--------------------------------------------------------------------------------------------------->
 				
-				
-				
-				
-				
-				
-
 				<div class="ui bottom attached tab segment delegate" data-tab="entity">
+					
 					<div class="ui fluid styled accordion" data-section="entity">
-						<div class="fixed disabled title"><i>No Entities</i></div>
+						<div class="fixed disabled title"><i>Currently no entities are defined for your thing</i></div>
 					</div>
 
 					<br/>
 					<div class="ui add-section button" data-target="entity">Add an Entity</div>
 				</div>
 
-				
 				
 				<!--------------------------------------------------------------------------------------------------->
 				<!--------------------------------------Attachments of Atlas thing----------------------------------->
@@ -1119,7 +1111,33 @@
 						</div>
 					</div>
 				</div>
+				
+				
+				
+				
+				
+				<!--------------------------------------------------------------------------------------------------->
+				<!-----------------------------------------HELP section---------------------------------------------->
+				<!--------------------------------------------------------------------------------------------------->
+				
+				<div class="ui bottom attached tab segment delegate" data-tab="help">
+					
+					<h4  class="ui header center"><i>What is difference between an entity and a thing?</i></h4>
+					
+					<div class="three fields">
+						<div class="field">
+							<img src="https://drive.google.com/thumbnail?id=1rfxDyihTUQbeaKLwXLq7L04a_GXfpyT1" style="width:100%; height:100%">
+						</div>
+						<div class="field">
+							<img src="https://drive.google.com/thumbnail?id=1-FSZeywVgcwZXjur8FyHUW1Bvf3F_GFl" style="width:100%; height:100%">
+						</div>
+					</div>
+					<h4  class="ui header center"><i>Each entity provides a set of services and you can also define relationships</i></h4>
+					
+				</div>
+			
 			</div>
+			
 
 			<div class="ui container">
 				<div class="wide ui primary submit button">Generate</div>
@@ -1170,13 +1188,13 @@
 						<label>ID <span class="ui icon help" data-content="A unique identifier for this entity within your thing; a combination of characters and digits (e.g., E_Sensor23).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.ID" placeholder="place a unique identifier to this entity"/>
+						<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Descriptive_Metadata.ID" placeholder="place a unique identifier to this entity"/>
 					</div>
 					<div class="field">
 						<label>Name <span class="ui icon help" data-content="What is this entity? (e.g., sensor, actuator).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" class="name" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Name" placeholder="add a short name to this entity"/>
+						<input type="text" class="name" name="Atlas_Thing.Atlas_Entity.Entity_*.Descriptive_Metadata.Name" placeholder="add a short name to this entity"/>
 					</div>
 				</div>
 				
@@ -1186,20 +1204,20 @@
 						<label>Owner <span class="ui icon help" data-content="Who is owner of this entity? (e.g., yourself, your company, your university)">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Owner" placeholder="identify who owns this entity"/>
+						<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Descriptive_Metadata.Owner" placeholder="identify who owns this entity"/>
 					</div>
 					<div class="field">
 						<label>Vendor <span class="ui icon help" data-content="Who is vendor of this entity? (e.g., Samsung, Wemo, or your are the vendor).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Vendor" placeholder="identify the vendor of this entity"/>
+						<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Descriptive_Metadata.Vendor" placeholder="identify the vendor of this entity"/>
 					</div>
 					
 					<div class="field">
 						<label>Category <span class="ui icon help" data-content="Is it a hardware entity?, or a software one?">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Category">
+						<select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Descriptive_Metadata.Category">
 							<option value="" disabled selected>Select the category of this entity</option>
 							<option value="Software">Software (e.g., library, script)</option>
 							<option value="Hardware">Hardware (e.g., sensor, actuator)</option>
@@ -1210,7 +1228,7 @@
 						<label>Type <span class="ui icon help" data-content="From the category of this entity, what is the type?">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Type">
+						<select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Descriptive_Metadata.Type">
 							<option value="" disabled selected>Select the type of this entity</option>
 							<option>Built-In</option>
 							<option>Connected</option>
@@ -1223,74 +1241,78 @@
 					<label>Description <span class="ui icon help" data-content="Provide a short description of this entity.">
 						<i class="question circle icon"></i>
 					</span></label>
-					<input type="text" name="Atlas_Entity.Entity_*.Descriptive_Metadata.Description" placeholder="add a short description on this entity"/>
+					<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Descriptive_Metadata.Description" placeholder="add a short description on this entity"/>
 				</div>
+			
+			<!-------------------------------------------------------------------------------------->
+			<!-------------------------------------------------------------------------------------->
+			<!-------------------------------------------------------------------------------------->
 
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				<h4 class="ui dividing header">Services</h4>
-
+				<br>
+				<br>
+				<h4 class="ui dividing header">Services 
+						<span class="ui icon help" data-content="Define the different functionalities this entity provides to your smart space (e.g., smart lamp can turn on, turn off, and change the brightness)">
+							<i class="question circle icon"></i>
+						</span>
+				</h4>
 				<div class="fluid accordion" data-section="service">
-					<div class="fixed disabled title"><i>No Services</i></div>
+					<div class="fixed disabled title"><i>Currently no services are defined under this entity</i></div>
 				</div>
-
 				<br/>
 				<div class="ui add-section button" data-target="service">Add a Service</div>
-
-				<h4 class="ui dividing header">Unbounded Services</h4>
-
+				
+				
+				<br>
+				<br>
+				<h4 class="ui dividing header">Unbounded Services 
+						<span class="ui icon help" data-content="Define the different functionalities not offered by this entity but may be offered by other things in the smart space that your services may cooperate or compete with (e.g., your entity prepares coffee, so a nice IoT application can be built if there is an alarm clock that can trigger the coffee machine by 6am)">
+							<i class="question circle icon"></i>
+						</span>
+				</h4>
 				<div class="fluid accordion" data-section="unbounded">
-					<div class="fixed disabled title"><i>No Unbounded Services</i></div>
+					<div class="fixed disabled title"><i>Currently no unbounded services are defined under this entity</i></div>
 				</div>
-
 				<br/>
 				<div class="ui add-section button" data-target="unbounded">Add an Unbounded Service</div>
-
-				<h4 class="ui dividing header">Relationships</h4>
-
+				
+				
+				<br>
+				<br>
+				<h4 class="ui dividing header">Relationships
+						<span class="ui icon help" data-content="Define the different functional links and relationships between different services and unbounded services (e.g., alarm clock can trigger the coffee machine to prepare morning coffee)">
+							<i class="question circle icon"></i>
+						</span>
+				</h4>
 				<div class="fluid accordion" data-section="relationship">
-					<div class="fixed disabled title"><i>No Relationships</i></div>
+					<div class="fixed disabled title"><i>Currently no relationships are defined under this entity</i></div>
 				</div>
-
 				<br/>
 				<div class="ui add-section button" data-target="relationship">Add a Relationship</div>
 			</div>
+			
+			
+			<!-------------------------------------------------------------------------------------->
+			<!-------------------------------------------------------------------------------------->
+			<!-------------------------------------------------------------------------------------->
+			
 
-			<div class="content delegate" id="service">
-				<h4 class="ui dividing header">Descriptive Metadata</h4>
+			<div class="content delegate" style="background-color: #f4fafc;" id="service">
+				<h4 class="ui dividing header">Service information</h4>
 
-				<div class="three fields">
+				<div class="field">
+					<label>Name <span class="ui icon help" data-content="What can be a short and descriptive name for this service for you and others (e.g., things in the smart space) to trigger such functionalities? (e.g., turn on light, read current room temperature)">
+						<i class="question circle icon"></i>
+					</span></label>
+					<input type="text" class="name" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Name" placeholder="add a descriptive name on this service"/>
+				</div>
+				<div class="two fields">
 					<div class="field">
-						<label>Name <span class="ui icon help" data-content="">
+						<label>Category <span class="ui icon help" data-content="Will this service be used in Entertainment kind of IoT applications? or Health ones?">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" class="name" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Name"/>
-					</div>
-					<div class="field">
-						<label>Category <span class="ui icon help" data-content="">
-							<i class="question circle icon"></i>
-						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.AppCategory">
-								<option>Ambience</option>
+						<select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.AppCategory">
+								<option value="" disabled selected>Select a category that describes the function of this service</option>
+								<option>Ambiance</option>
 								<option>Automation</option>
 								<option>Wellness</option>
 								<option>Lighting</option>
@@ -1300,67 +1322,87 @@
 								<option>Entertainment</option>
 								<option>Environment Monitor</option>
 								<option>Time Alarms</option>
-								<option>Hygeine</option>
+								<option>Hygiene</option>
 								<option>Eating</option>
 								<option>Cleaning</option>
 								<option>Office</option>
 						</select>
 					</div>
 					<div class="field">
-						<label>Type <span class="ui icon help" data-content="">
+						<label>Type <span class="ui icon help" data-content="What is the type of this service? (e.g., does it report data, or perform an action)">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Type">
-							<option>Action</option>
-							<option>Report</option>
-							<option>Condition</option>
+						<select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Type">
+							<option value="" disabled selected>Select the functionality type offered by this service</option>
+							<option value="Action">Action (e.g., turn on electric switch)</option>
+							<option value="Report">Report (e.g., read temperature sensor)</option>
+							<option value="Condition">Condition (e.g., check the availability of a parking spot)</option>
 						</select>
 					</div>
 				</div>
-				<div class="two fields">
-					<div class="field">
-						<label>Description <span class="ui icon help" data-content="">
-							<i class="question circle icon"></i>
+				
+				<div class="field">
+					<label>Keywords <span class="ui icon help" data-content="A set of keywords describing the offered functionality and the nature of an IoT application that can use this service (e.g., for a coffee machine service: morning, breakfast, energy, work)">
+						<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Description"/>
-					</div>
-					<div class="field">
-						<label>Keywords <span class="ui icon help" data-content="">
-							<i class="question circle icon"></i>
-						</span></label>
-						<select multiple="" class="ui fluid dropdown search" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Keywords"></select>
-					</div>
+					<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Keywords" placeholder="place a set of keywords (separated by commas) describing the functionality and nature of the service "></select>
+					<!--<select multiple="" class="ui fluid dropdown search" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Keywords" placeholder="place a set of keywords (separated by commas) describing the functionality and nature of the service "></select>-->
 				</div>
+				
+				<div class="field">
+					<label>Description <span class="ui icon help" data-content="How can you describe the functionality offered by this service?">
+						<i class="question circle icon"></i>
+						</span></label>
+					<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Description" placeholder="add a short description on the offered service"/>
+				</div>
+				
+				
+				<br>
+				<h4  class="ui header center"><i>A constraint represents a precondition to the behavior of the service to avoid harmful use of the service and to avoid introducing unsafe state for the smart space</i></h4>
+				<h4  class="ui header center"><i>use the following dialog to place the different contextual and temporal constraint on this service</i></h4>
+				<br>
+				
+				
 
-				<h4 class="ui dividing header">Contextual Constraints<span class="ui icon help" data-content="">
+				<h4 class="ui dividing header">Contextual Constraints<span class="ui icon help" data-content="Ignoring safety puts the operation of the service and thing in danger of improper or harmful use and the smart space in unsafe state.(e.g., an automatic door opener with a strike-push mechanism getting invoked 50,000 times per second due to a bug in the program.)">
 					<i class="question circle icon"></i>
 				</span></h4>
+				
+				
 
 				<div class="field">
-					<label>Concurrent<span class="ui icon help" data-content="">
+					<label>Time Window<span class="ui icon help" data-content="the safe time (in seconds) that separates consecutive calls to the offered service, this window represents how long (in seconds) does the service take to complete the task">
 						<i class="question circle icon"></i>
 					</span></label>
-					<input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Contextual_Constraints.Concurrent"/>
+					<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Contextual_Constraints.Time_Window" value="30seconds"/>
 				</div>
-				<div class="field">
-					<label>Time Window<span class="ui icon help" data-content="">
-						<i class="question circle icon"></i>
-					</span></label>
-					<input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Contextual_Constraints.Time_Window"/>
+				
+				
+				<div class="two fields">
+					<div class="field">
+						<label>Usage Mode<span class="ui icon help" data-content="Can this service be engaged in multiple applications at the same time?">
+							<i class="question circle icon"></i>
+						</span></label>
+						<select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Contextual_Constraints.Usage_Mode">
+								<option value="" disabled selected>Select a usage mode of this service</option>
+								<option value="Single">Single (service can be engaged in single-application)</option>
+								<option value="Multiple">Multiple (this service can be engaged in multiple-applications)</option>
+						</select>
+					</div>
+					<div class="field">
+						<label>Concurrent<span class="ui icon help" data-content="Does this service allow concurrent call, even from a single application?">
+							<i class="question circle icon"></i>
+						</span></label>
+						<select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Contextual_Constraints.Concurrent"/>
+								<option value="" disabled selected>Select the concurrency mode</option>
+								<option value="No">No (this service allows single call within the time window)</option>
+								<option value="Yes">Yes (this service allows concurrent calls even from single/multiple mode)</option>
+						</select>
+					</div>
 				</div>
-
-				<div class="field">
-					<label>Usage Mode<span class="ui icon help" data-content="">
-						<i class="question circle icon"></i>
-					</span></label>
-					<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Contextual_Constraints.Usage_Mode">
-							<option>Single</option>
-							<option>Multiple</option>
-							<option></option>
-					</select>
-				</div>
-
-				<h4 class="ui dividing header">Temporal Constraints <span class="ui icon help" data-content="">
+				
+				
+				<h4 class="ui dividing header">Temporal Constraints <span class="ui icon help" data-content="Temporal constraints deal with the acceptable time interval(s) for the work of this service and the acceptable time interval(s) to allow user trigger for the offered service (e.g., a user can start the microwave any time between 8:00am and 10:00pm, otherwise the device must remain off).">
 					<i class="question circle icon"></i>
 				</span></h4>
 
@@ -1373,82 +1415,104 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td>Working <span class="ui icon help" data-content="">
+								<td>Working <span class="ui icon help" data-content="the acceptable time window for the work of this service (including the regular work time as well as the maintanince time)">
 									<i class="question circle icon"></i>
 								</span></td>
-								<td><input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Temporal_Constraints.Working.StartTime"/></td>
-								<td><input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Temporal_Constraints.Working.EndTime"/></td>
+								<td><input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Temporal_Constraints.Working.StartTime" value="6am"/></td>
+								<td><input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Temporal_Constraints.Working.EndTime" value="10pm"/></td>
 							</tr>
 							<tr>
-								<td>Callable <span class="ui icon help" data-content="">
+								<td>Callable <span class="ui icon help" data-content="the acceptable time window during which a user can trigger an API (e.g., user cannot trigger a call from 7pm to 7:30pm because of the periodic maintenance)">
 									<i class="question circle icon"></i>
 								</span></td>
-								<td><input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Temporal_Constraints.Callable.StartTime"/></td>
-								<td><input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Temporal_Constraints.Callable.EndTime"/></td>
+								<td><input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Temporal_Constraints.Callable.StartTime" value="6:30am"/></td>
+								<td><input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Temporal_Constraints.Callable.EndTime" value="9:30pm"/></td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
 
-				<h4 class="ui dividing header">Input Parameters <span class="ui icon help" data-content="">
+				
+				
+				
+				<br>
+				<h4  class="ui header center"><i>use the following dialog to build the functionality of this service in terms of defining the required inputs, expected output, and developing the C/C++-based code from ready available APIs</i></h4>
+				<br>
+				
+				<h4 class="ui dividing header">Service Inputs <span class="ui icon help" data-content="define the inputs (if any) required for the operation of this service (e.g., turn on light by certain time, so time is an input that should be provided in the call)">
 					<i class="question circle icon"></i>
 				</span></h4>
 
 				<table class="ui white table inputs">
 					<thead>
 						<th class="one wide"><i class="ui add-row icon add" data-target="input-row"></i></th>
-						<th class="seven wide">Data Type</th>
-						<th class="eight wide">Description</th>
+						<th class="eight wide">Name <span class="ui icon help" data-content="provide short description of the input (e.g., turn on light by certain time, so time is an input that should be provided in the call)">
+							<i class="question circle icon"></i>
+						</span></th>
+						<th class="seven wide">Type <span class="ui icon help" data-content="provide the data type of the input">
+							<i class="question circle icon"></i>
+						</span></th>
 					</thead>
 
 					<tbody><tr class="fixed">
 						<td class="center" colspan="3">
-							<i>This Service takes no input ("void"). Click the plus to define a parameter.</i>
+							<i>This Service takes no input ("void"). Click the plus to define an input.</i>
 						</td>
 					</tr></tbody>
 				</table>
-
-				<h4 class="ui dividing header">Output Value</h4>
-
+				
+				
+				<h4 class="ui dividing header">Service Output <span class="ui icon help" data-content="define the expected output from running this service (e.g., temperature sensor returns the current room temperature in C)">
+					<i class="question circle icon"></i>
+				</span></h4>
+				
 				<div class="two fields">
+					
 					<div class="field">
-						<label>Data Type <span class="ui icon help" data-content="">
+						<label>Name <span class="ui icon help" data-content="provide short description of the output (e.g., the returned value from the temperature sensor is Celsius)"">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.OutputType">
-							<option value="void">void</option>
-							<option value="int">integer</option>
-							<option value="float">floating point</option>
-							<option value="const char*">string</option>
-							<option value="bool">boolean</option>
+						<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.OutputDescription"/>
+					</div>
+						
+						
+					<div class="field">
+						<label>Data Type <span class="ui icon help" data-content="provide the data type of the output">
+							<i class="question circle icon"></i>
+						</span></label>
+						<select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.OutputType">
+							<option value="void">void (nothing)</option>
+							<option value="int">Integer (non decimal number)</option>
+							<option value="float">Floating point (decimal number)</option>
+							<option value="const char*">String (set of characters and digits)</option>
+							<option value="bool">Boolean (True or False)</option>
 						</select>
 					</div>
-					<div class="field">
-						<label>Description</label>
-						<input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.OutputDescription"/>
-					</div>
 				</div>
-
-				<h4 class="ui dividing header">Functionality <span class="ui icon help" data-content="">
+				
+				<h4 class="ui dividing header">Functionality <span class="ui icon help" data-content="use the window below to develop the C/C++ functionality of this service">
 					<i class="question circle icon"></i>
 				</span></h4>
 
-
 				<div class="functionality">
 					<div class="field">
-<textarea class="editor" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Service_Formula">
-// ~ Service body C code block ~
-// Input parameters are available as named above
-// Any return values should match the specified output type
-</textarea>
+						<textarea class="editor" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Service_Formula"> 
+							// ~ Service body C/C++ code block ~
+							// You can use the inputs you defined above by name
+							// Any return values should match the specified output type
+						
+						</textarea>
 					</div>
 
-					<div class="ui horizontal divider">or</div>
+					<div class="ui horizontal divider">you can also use the general platform-free APIs below to develop your code</div>
 
 					<div class="two fields">
 						<div class="field">
-							<label>Statement Generator</label>
+							<label>General platform-free APIs<span class="ui icon help" data-content="use the drop menu below to select a general (platform-free) API, adjust the characteristics (e.g., inputs) that will be shown below on selection if required, then click add this API button to add it to your C/C++ code above">
+								<i class="question circle icon"></i>
+							</span></label>
 							<select class="update-statement ui fluid dropdown">
+								<option value="" disabled selected>Select an API</option>
 								<option value="print_value">Print Value</option>
 								<option value="print_string">Print String</option>
 								<option value="DigitalWrite_High">Write Digital high (5 Volt)</option>
@@ -1458,12 +1522,11 @@
 								<option value="AnalogWrite">Write analog value to an analog pin</option>
 								<option value="DigitalRead">Read the value from digital pin</option>
 								<option value="AnalogRead">Read the value from analog pin</option>
-
 							</select>
 						</div>
 						<div class="field">
 							<label>&#160</label>
-							<div class="wide ui add-statement button">Insert Above</div>
+							<div class="wide ui add-statement button">Add this API to your code</div>
 						</div>
 					</div>
 
@@ -1524,99 +1587,134 @@
 						<i class="ui remove-row red icon close"></i> <i class="ui move-row blue icon sort"></i>
 					</td>
 					<td>
-						<div class="field"><select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Inputs.Input_*.Input_Type">
-							<option value="int">integer</option>
-							<option value="float">floating point</option>
-							<option value="const char*">string</option>
-							<option value="bool">boolean</option>
-						</select></div>
+						<div class="field"><input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Inputs.Input_*.Input_Description"></div>
 					</td>
 					<td>
-						<div class="field"><input type="text" name="Atlas_Entity.Entity_*.Resource_Service.Service_*.Inputs.Input_*.Input_Description"></div>
+						<div class="field"><select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Inputs.Input_*.Input_Type">
+							<option value="" disabled selected>Select the type of the input</option>
+							<option value="int">Integer (non decimal number)</option>
+							<option value="float">Floating point (decimal number)</option>
+							<option value="const char*">String (set of characters and digits)</option>
+							<option value="bool">Boolean (True or False)</option>
+						</select></div>
 					</td>
 				</tr></tbody>
 			</table>
 
-			<div class="content delegate" id="unbounded">
-				<h4 class="ui dividing header">Descriptive Metadata</h4>
-
-				<div class="three fields">
-					<div class="field">
-						<label>Name <span class="ui icon help" data-content="">
+			
+			
+			
+			<div class="content delegate" style="background-color: #fff9f9" id="unbounded">
+				<h4 class="ui dividing header">Unbounded service information
+						<span class="ui icon help" data-content="Define a virtual functionality not offered by this entity but may be offered by other things in the smart space that your services may cooperate or compete with (e.g., your entity prepares coffee, so a nice IoT application can be built if there is an alarm clock that can trigger the coffee machine by 6am)">
 							<i class="question circle icon"></i>
-						</span></label>
-						<input type="text" class="name" name="Atlas_Entity.Entity_*.UnboundedService.UB_*.Name"/>
-					</div>
-					<div class="field">
-						<label>Type <span class="ui icon help" data-content="">
-							<i class="question circle icon"></i>
-						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_Entity.Entity_*.UnboundedService.UB_*.type">
-							<option>Action</option>
-							<option>Report</option>
-							<option>Condition</option>
-						</select>
-					</div>
-					<div class="field">
-						<label>Match Value <span class="ui icon help" data-content="">
-							<i class="question circle icon"></i>
-						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchValue"/>
-					</div>
-				</div>
-
-				<h4 class="ui dividing header">Match Parameters <span class="ui icon help" data-content="">
-					<i class="question circle icon"></i>
-				</span></h4>
+						</span>
+				</h4>
 
 				<div class="two fields">
 					<div class="field">
-						<label>Vendors <span class="ui icon help" data-content="">
+						<label>Name <span class="ui icon help" data-content="What can be a short and descriptive name for this virtual service">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select multiple="" class="ui fluid dropdown search" name="Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchVendor"></select>
+						<input type="text" class="name" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.Name" placeholder="add a descriptive name on this virtual service"/>
+					</div>
+					
+					<div>
+						<label>Description <span class="ui icon help" data-content="Provide a description for this virtual service.">
+							<i class="question circle icon"></i>
+						</span></label>
+						<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.Description"   placeholder="add a description on this virtual service."/>
+					</div>
+				</div>
+				
+				<h4 class="ui dividing header">Matching Parameters <span class="ui icon help" data-content="for your smart thing to find a match between this virtual service and other services offered by smart things in your smart space, complete the attributes below to guide such match operation">
+					<i class="question circle icon"></i>
+				</span></h4>
+				
+				
+				<div class="three fields">
+					<div class="field">
+						<label>Type <span class="ui icon help" data-content="What is the type of this virtual service? (e.g., does it report data, or perform an action)">
+							<i class="question circle icon"></i>
+						</span></label>
+						<select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchType">
+							<option value="" disabled selected>Select the functionality type of this service</option>
+							<option value="Action">Action (e.g., turn on electric switch)</option>
+							<option value="Report">Report (e.g., read temperature sensor)</option>
+							<option value="Condition">Condition (e.g., check the availability of a parking spot)</option>
+						</select>
 					</div>
 					<div class="field">
-						<label>Keywords <span class="ui icon help" data-content="">
+						<label>Vendors <span class="ui icon help" data-content="Who can be the vendors (comma separated) of this virtual service? (e.g., Samsung, Wemo).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select multiple="" class="ui fluid dropdown search" name="Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchKeywords"></select>
+						<select multiple="" class="ui fluid dropdown search" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchVendor"  placeholder="identify the vendor of this virtual entity"></select>
+					</div>
+					<div class="field">
+						<label>Keywords <span class="ui icon help" data-content="A set of keywords describing the nature and functionality of this virtual service">
+							<i class="question circle icon"></i>
+						</span></label>
+						<select multiple="" class="ui fluid dropdown search" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchKeywords" placeholder="place a set of keywords (separated by commas) describing the functionality and nature of this virtual service "></select>
 					</div>
 				</div>
+
+				<div class="field">
+						<label>Match Value <span class="ui icon help" data-content="for your smart thing to find a match between this virtual service and other services offered by smart things in your smart space, the match value represents the minimum percentage of match in parameters between this virtual service and another offered service, to be considered as a match and perform the replacement">
+							<i class="question circle icon"></i>
+						</span></label>
+						<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchValue" value="70%"/>
+				</div>
+
 			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 
-			<div class="content delegate" id="relationship">
-				<h4 class="ui dividing header">Descriptive Metadata</h4>
-
+			<div class="content delegate" style="background-color: #f3ffea" id="relationship">
+				<h4 class="ui dividing header">Relationship information <span class="ui icon help" data-content="Define the different functional links and relationships between different services and unbounded services (e.g., alarm clock can trigger the coffee machine to prepare morning coffee)">
+							<i class="question circle icon"></i>
+						</span>
+				</h4>
+				
 				<div class="fields">
 					<div class="four wide field">
-						<label>Name <span class="ui icon help" data-content="">
+						<label>Name <span class="ui icon help" data-content="Provide a descriptive name to this relationship">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" class="name" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Name"/>
+						<input type="text" class="name" name="Atlas_Thing.Atlas_Entity.Entity_*.Relationships.Relationship_*.Name" placeholder="short and descriptive name to this relationship"/>
 					</div>
 					<div class="four wide field">
-						<label>Establisher <span class="ui icon help" data-content="">
+						<label>Establisher <span class="ui icon help" data-content="Mention who established this relationship (e.g., Samsung, Wemo, yourself)">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Establisher"/>
+						<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Relationships.Relationship_*.Establisher" placeholder="who is establishing this relationship"/>
 					</div>
 					<div class="eight wide field">
-						<label>Description <span class="ui icon help" data-content="">
+						<label>Description <span class="ui icon help" data-content="Add a short description to this relationship">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_Entity.Entity_*.Relationships.Relationship_*.Description"/>
+						<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Relationships.Relationship_*.Description" placeholder="a short description on this relationship"/>
 					</div>
 				</div>
 
-				<h4 class="ui dividing header">Behavior <span class="ui icon help" data-content="">
+				<h4 class="ui dividing header">Behavior <span class="ui icon help" data-content="mention the behavior of this relationshp usig one of the following relationship types (e.g., alarm clock controls the coffee machine to prepare morning coffee, turning on the oven interferes with closing alarm clock)">
 					<i class="question circle icon"></i>
 				</span></h4>
 
 				<div class="behavior three fields">
 					<div class="kind field">
-						<label>&#160</label>
-						<select class="update-relationship ui fluid dropdown">
+						<label>Relationship Type</label>
+						<select class="update-relationship ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Relationships.Relationship_*.type">
+							<option value="" disabled selected>Select the type of the relationship</option>
 							<option value="control">Control</option>
 							<option value="drive">Drive</option>
 							<option value="support">Support</option>
@@ -1627,6 +1725,7 @@
 					</div>
 
 					<div class="this field">
+						<label data-kind="">First Service</label>
 						<label data-kind="control">IF</label>
 						<label data-kind="drive">USE</label>
 						<label data-kind="support">BEFORE</label>
@@ -1634,11 +1733,12 @@
 						<label data-kind="contest">PREFER USING</label>
 						<label data-kind="interfere">DO NOT DO</label>
 
-						<select class="ui fluid dropdown">
-							<option value="">select 'this' service</option>
+						<select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Relationships.Relationship_*.Input1">
+							<option value="">select a service/unbounded service</option>
 						</select>
 					</div>
 					<div class="that field">
+						<label data-kind="">Second Service</label>
 						<label data-kind="control">THEN</label>
 						<label data-kind="drive">TO DO</label>
 						<label data-kind="support">CHECK ON</label>
@@ -1646,8 +1746,8 @@
 						<label data-kind="contest">OVER</label>
 						<label data-kind="interfere">IF DOING</label>
 
-						<select class="ui fluid dropdown">
-							<option value="">select 'that' service</option>
+						<select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Relationships.Relationship_*.Input2">
+							<option value="">select a service/unbounded service</option>
 						</select>
 					</div>
 				</div>
