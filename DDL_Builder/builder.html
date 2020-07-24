@@ -1122,23 +1122,106 @@
 				
 				<div class="ui bottom attached tab segment delegate" data-tab="help">
 					
-					<h4  class="ui header center"><i>What is difference between an entity and a thing?</i></h4>
+					<h4  class="ui header center"><i>What is an IoT-DDL?</i></h4>
+					<p>
+					IoT-DDL is an XML-based human- and machine-readable configuration scheme to describe a thing in IoT in terms of inner components, identity, 
+					capabilities, resources, attachments and services. The IoT-DDL also describes the knowledge (social bonds and relationships)
+					injected or acquired by the thing, as well as the different interactions that engage the thing with cloud platforms, 
+					edges, users (e.g., end-user, developer) and space-mates (nearby things or remote ones).
+					</p>
 					
-					<div class="three fields">
-						<div class="field">
-							<img src="https://drive.google.com/thumbnail?id=1rfxDyihTUQbeaKLwXLq7L04a_GXfpyT1" style="width:100%; height:100%">
-						</div>
-						<div class="field">
-							<img src="https://drive.google.com/thumbnail?id=1-FSZeywVgcwZXjur8FyHUW1Bvf3F_GFl" style="width:100%; height:100%">
-						</div>
-					</div>
-					<h4  class="ui header center"><i>Each entity provides a set of services and you can also define relationships</i></h4>
+					<br>
+					<br>
 					
+					<hr width=”50%”>
+					<h4  class="ui header center"><i>What is a thing? and Why do you need to develop an IoT-DDL for your thing?</i></h4>
+					<p>
+					A thing in an IoT ecosystem, as illustrated in the figure below, is a composition of a set of resources, entities, services, and attachments that work together to provide various interactions and are defined through a set of attributes and properties that influence essential internal services. 
+					A thing’s resources describe the shared components that a thing requires to be part of the IoT (e.g., network module, memory unit). 
+					A thing’s entities define the different hardware and software components that allow a smart space and its things to interact with it. 
+					These individual interactions are represented as services, functions with well-defined interfaces (APIs) that can be utilized by users or other things. 
+					A thing may also offer additional interactions through external attachments, or cloud-based resources that offer additional services (e.g., log server, database, dashboard).
+					Such configuration schemes are created by the thing vendor or owner and this then gets uploaded to the thing to enable the thing to self-discover its own power and engage with the surrounding IoT ecosystem.
+					
+						<div class="field">
+							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/ThingTaxnomy.jpg" style="width:50%; height:50%">
+						</div>
+						
+					</p>
+					
+					<br>
+					<br>
+					
+					
+					<hr width=”50%”>
+					<h4  class="ui header center"><i>What are the steps of building such IoT-DDL?</i></h4>
+					<p>
+					Five steps to build an Atlas_IoT-DDL.xml for your thing to be an Atlas thing
+					</p>
+					
+					<h5  class="ui header center"><i><b><u>Step1:</u></b></i></h5>
+					Under the "Descriptive Metadata" section, you can provide general information regarding your thing (e.g., name, description, vendor) along with information about the smart space that will accommodate your new smart thing (e.g., Living room, Bedroom).
+					Through this section, you can also provide the environmental/physical constraints your thing may need from the smart space for a safe operation (e.g., the minimum and maximum temperature of the smart space to accommodate your thing.
+						<div class="field">
+							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/DescriptiveMetadata.jpg" style="width:100%; height:100%">
+						</div>
+					
+					<br>
+					<br>
+					<h5  class="ui header center"><i><b><u>Step2:</u></b></i></h5>
+					Under the "Structural and Administrative Metadata" section, you can provide information regarding the network module (e.g., wifi, bluetooth) along with the communication protocol (e.g., REST HTTP) that will allow your smart thing will use to communicate with other things.
+					Through this section, you can also provide information about the device management you would like to use to monitor your thing remotely and the different interoperability settings for your thing to communicate with other smart things that use different communication languages.
+						<div class="field">
+							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/AdministrativeMetadata.jpg" style="width:100%; height:100%">
+						</div>
+					
+					<br>
+					<br>
+					<h5  class="ui header center"><i><b><u>Step3:</u></b></i></h5>
+					Under the "Entity, Services, and Relationships" section, you can define the different individual entities within your thing, along with the different services, unbounded services (virtual services), and relationships.
+						<div class="field">
+							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/EntitiesTab.jpg" style="width:100%; height:100%">
+						</div>
+					
+						<p>What is difference between an entity and a thing?</p>
+						<div class="two fields">
+							<div class="field">
+								<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/Entity1.gif" style="width:100%; height:100%">
+							</div>
+							<div class="field">
+								<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/Entity2.jpg" style="width:100%; height:100%">
+							</div>
+						</div>
+						
+						<p>What is difference between a service offered by an entity, and a relationship?</p>
+						<div class="two fields">
+							<div class="field">
+								<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/Services.jpg" style="width:100%; height:100%">
+							</div>
+							<div class="field">
+								<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/relationship.gif" style="width:100%; height:100%">
+							</div>
+						</div>
+					
+					<br>
+					<br>
+					<h5  class="ui header center"><i><b><u>Step4:</u></b></i></h5>
+					Under the "Attachments" section, you can define the external attachments, or cloud-based resources that offer additional services (e.g., log server, database, dashboard) to your smart thing.
+						<div class="field">
+							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/Attachments.jpg" style="width:100%; height:100%">
+						</div>
+					
+					<br>
+					<br>
+					<h5  class="ui header center"><i><b><u>Step5:</u></b></i></h5>
+					After you finish providing informaiton about your thing, the last step is to generate the IoT-DDL file.
+					Click on the "Generate" blue button placed at the bottom of the page, this will guide you to another dialog box to confirm the download.					
+						<div class="field">
+							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/download.jpg" style="width:20%; height:30%">
+						</div>
 				</div>
-			
 			</div>
 			
-
 			<div class="ui container">
 				<div class="wide ui primary submit button">Generate</div>
 			</div>
