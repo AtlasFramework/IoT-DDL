@@ -212,10 +212,43 @@
 
 				return obj;
 			};
-			let repairInputs = function(obj) {
-				let es = obj['Atlas_Thing.Atlas_Entity'];
+			let updateKey = function(obj, oldkey, newkey) {
+				if (newkey === oldkey)
+					return;
+
+				obj[newkey] = obj[oldkey];
+				delete obj[oldkey];
+			};
+			let repairIndices = function(obj) {
+				let es = obj['Atlas_Thing']['Atlas_Entity'];
+				let en = 1;
+
 				for (let e in es) {
-					let ss = es[e]['Resource_Service'];
+					let ss = es[e]['Services'];
+					let sn = 1;
+
+					for (let s in ss)
+						updateKey(ss, s, 'Service_' + sn++);
+
+					let us = es[e]['UnboundedService'];
+					let un = 1;
+
+					for (let u in us)
+						updateKey(us, u, 'UB_' + un++);
+
+					let rs = es[e]['Relationships'];
+					let rn = 1;
+
+					for (let r in rs)
+						updateKey(rs, r, 'Relationship_' + rn++);
+
+					updateKey(es, e, 'Entity_' + en++);
+				}
+			};
+			let repairInputs = function(obj) {
+				let es = obj['Atlas_Thing']['Atlas_Entity'];
+				for (let e in es) {
+					let ss = es[e]['Services'];
 					for (let s in ss) {
 						let types = '';
 						let descs = '';
@@ -486,6 +519,7 @@
 						let values = $(e.target).form('get values');
 
 						let ddl = toObject(values);
+						repairIndices(ddl);
 						repairInputs(ddl);
 						repairAttachments(ddl);
 
@@ -523,13 +557,12 @@
 					<a class="item" data-tab="help" style="color: #dd581f;"><b>HELP ! ... </b> <i> a step-by-step guide</i></a>
 				</div>
 
-				
 				<!--------------------------------------------------------------------------------------------------->
 				<!-----------------------------The descriptive meta-data of Atlas thing------------------------------>
 				<!--------------------------------------------------------------------------------------------------->
-				
+
 				<div class="ui bottom attached active tab segment" data-tab="desc">
-					
+
 					<h4 class="ui dividing header">Thing Information</h4>
 
 					<div class="two fields">
@@ -539,7 +572,7 @@
 							</span></label>
 							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ATID" placeholder="place a unique identifier to your thing"/>
 						</div>
-						
+
 						<div class="field">
 							<label>Name <span class="ui icon help" data-content="What is your Atlas thing? (e.g., Smart Lamp, DVD Player).">
 								<i class="question circle icon"></i>
@@ -547,30 +580,30 @@
 							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Name" placeholder="add a short name to your thing"/>
 						</div>
 					</div>
-					
+
 					<div class="four fields">
-					
+
 						<div class="field">
 							<label>Owner <span class="ui icon help" data-content="Who is owner of your smart thing? (e.g., yourself, your company, your university).">
 								<i class="question circle icon"></i>
 							</span></label>
 							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Owner" placeholder="identify who owns this thing"/>
 						</div>
-					
+
 						<div class="field">
 							<label>Vendor <span class="ui icon help" data-content="Who is vendor of your smart thing? (e.g., Samsung, Wemo, or your are the vendor).">
 								<i class="question circle icon"></i>
 							</span></label>
 							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Vendor" placeholder="identify the vendor of your thing"/>
 						</div>
-						
+
 						<div class="field">
 							<label>Model <span class="ui icon help" data-content="What is the model of this thing? (e.g., Samsung S8+, WeMo 2nd Gen).">
 								<i class="question circle icon"></i>
 							</span></label>
 							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Model"  placeholder="identify the model of your thing"/>
 						</div>
-						
+
 						<div class="field">
 							<label>Release Date <span class="ui icon help" data-content="What is the release month/year of your smart thing?">
 								<i class="question circle icon"></i>
@@ -578,9 +611,7 @@
 							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ReleaseDate" value="8/2020"/>
 						</div>
 					</div>
-					
-					
-					
+
 					<div class="field">
 							<label>Type <span class="ui icon help" data-content="Is your thing is an Edge device, sofware application, or other?">
 								<i class="question circle icon"></i>
@@ -596,8 +627,7 @@
 								<option value="Edge Thing">Edge Thing (e.g., Computing terminal, Server, Set-top box, Data warehouse)</option>
 							</select>
 					</div>
-					
-					
+
 					<div class="field">
 							<label>Operating System <span class="ui icon help" data-content="What is the operating system that runs your thing? (e.g., Raspberry Linux for Raspberry Pi, Android for Smartphone).">
 								<i class="question circle icon"></i>
@@ -611,28 +641,25 @@
 								<option value="Arduino"> Arduino kernel (e.g., Arduino Uno, Libelium)</option>
 							</select>
 					</div>
-					
+
 					<div class="field">
 						<label>Description <span class="ui icon help" data-content="A short description for the function of your thing.">
 							<i class="question circle icon"></i>
 						</span></label>
 						<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ShortDescription"  placeholder="add a short description on the nature your thing"/>
 					</div>
-					
+
 					<div class="field">
 						<label>Comments <span class="ui icon help" data-content="Describe your thing in more detail.">
 							<i class="question circle icon"></i>
 						</span></label>
 						<textarea  placeholder="add more comments describing your thing"></textarea>
 					</div>
-					
-					
+
 					<br>
 					<h4  class="ui header center"><i>once you describe your thing, use the following dialogs to describe where you deploy your thing</i></h4>
 					<br>
-					
-					
-				
+
 					<h4 class="ui dividing header">Smart Space Information</h4>
 
 					<div class="two fields">
@@ -649,7 +676,7 @@
 							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Coordinates" placeholder="provide the GPS coordinates of your smart space (e.g., 41.9, -87.7)"/>
 						</div>
 					</div>
-					
+
 					<div class="field">
 							<label>Name <span class="ui icon help" data-content="What is your smart space? (e.g., living Room, Kitchen).">
 								<i class="question circle icon"></i>
@@ -663,14 +690,14 @@
 								<option value="Classroom">Classroom</option>
 							</select>
 					</div>
-					
+
 					<div class="field">
 						<label>Description <span class="ui icon help" data-content="Provide a short description of your smart space (e.g., master bedroom of the house).">
 							<i class="question circle icon"></i>
 						</span></label>
 						<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Description"   placeholder="add a short description on the smart space"/>
 					</div>
-					
+
 					<div class="field">
 						<label>Space Constraints <span class="ui icon help" data-content="define the environmental/physical constraints your thing needs from the smart space for a safe operation (e.g., the minimum and maximum temperature of the smart space to accommodate your thing)">
 							<i class="question circle icon"></i>
@@ -683,21 +710,21 @@
 							</thead>
 							<tbody>
 								<tr><td>Temperature</td>
-								
+
 									<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Temperature.Lower_Bound" placeholder="10C"/></td>
 								    <td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Temperature.Upper_Bound" placeholder="35C"/></td></tr>
-								
+
 								<tr><td>Humidity</td>
 									<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Humidity.Lower_Bound" placeholder="10%"/></td>
 								    <td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Humidity.Upper_Bound" placeholder="40%"/></td></tr>
-								
+
 								<tr><td>Voltage</td>
 									<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Voltage.Lower_Bound" placeholder="110V"/></td>
 								    <td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Voltage.Upper_Bound" placeholder="220V"/></td></tr>
 							</tbody>
 						</table>
 					</div>
-					
+
 					<div class="two fields">
 						<div class="field">
 							<label>Radio Interference Radius <span class="ui icon help" data-content="if your thing uses radio waves for operation, define the radio radius to avoid interference with other devices in the smart space">
@@ -715,23 +742,16 @@
 
 				</div>
 
-				
-				
-				
-				
-				
 				<!--------------------------------------------------------------------------------------------------->
 				<!---------------The structural and administrative meta-data of Atlas thing-------------------------->
 				<!--------------------------------------------------------------------------------------------------->
-				
-				
-				
+
 				<div class="ui bottom attached tab segment" data-tab="struct">
-				
+
 					<h4 class="ui dividing header">Network Module</h4>
 
 					<div class="two fields">
-					
+
 						<div class="field">
 							<label>Technology <span class="ui icon help" data-content="Which network module is equipped by your thing? (e.g., WiFi, Bluetooth).">
 								<i class="question circle icon"></i>
@@ -755,8 +775,7 @@
 							</select>
 						</div>
 					</div>
-					
-					
+
 					<div class="two fields" id="network-fields">
 						<div class="field">
 							<label>Network Name (SSID) <span class="ui icon help" data-content="In case you select Wifi, provide the name of your network (e.g., the name of your home Wifi)">
@@ -771,7 +790,7 @@
 							<input type="password" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Network_Passcode"  placeholder="place the passcode of network to join"/>
 						</div>
 					</div>
-					
+
 					<div class="field">
 						<label>Communication Protocol <span class="ui icon help" data-content="Which communication protocol does your thing use for communication? (e.g., REST-HTTP).">
 							<i class="question circle icon"></i>
@@ -784,11 +803,11 @@
 							<option value="Sockets"> TCP/IP Sockets</option>
 						</select>
 					</div>
-					
+
 					<br>
 					<h4  class="ui header center"><i>use the following dialog for your thing, through our protocol translator, to communicate with other things that use different technologies, protocols, and modules</i></h4>
 					<br>
-					
+
 					<h4 class="ui dividing header">Inter-Operable Communication</h4>
 
 					<div class="two fields">
@@ -805,8 +824,7 @@
 							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Dashboard" value="http://www.mqtt-dashboard.com/"/>
 						</div>
 					</div>
-					
-					
+
 					<div class="two fields">
 						<div class="field">
 							<label>Broker IP <span class="ui icon help" data-content="The Internet address (IP) of the global or local broker for the inter-operable communication">
@@ -820,9 +838,8 @@
 							</span></label>
 							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Port" value="1883"/>
 						</div>
-						
 					</div>
-					
+
 					<div class="field">
 						<label>Topics <span class="ui icon help" data-content="The different topics through which things and protocol translators can communicate to enable inter-operable communication">
 							<i class="question circle icon"></i>
@@ -848,7 +865,7 @@
 					<br>
 					<h4  class="ui header center"><i>use the following dialog to enable the remote management, using OMA-DM LwM2M protocol, for your thing</i></h4>
 					<br>
-					
+
 					<h4 class="ui dividing header">Device Management (DM)</h4>
 
 					<div class="fields">
@@ -872,9 +889,6 @@
 						</div>
 					</div>
 
-					
-					
-					
 					<h4 class="ui dividing header">Memory Units</h4>
 
 					<div class="three fields">
@@ -910,13 +924,13 @@
 						</div>
 					</div>
 				</div>
-				
+
 				<!--------------------------------------------------------------------------------------------------->
 				<!-----------------------------------------Entities of Atlas thing----------------------------------->
 				<!--------------------------------------------------------------------------------------------------->
-				
+
 				<div class="ui bottom attached tab segment delegate" data-tab="entity">
-					
+
 					<div class="ui fluid styled accordion" data-section="entity">
 						<div class="fixed disabled title"><i>Currently no entities are defined for your thing</i></div>
 					</div>
@@ -925,13 +939,10 @@
 					<div class="ui add-section button" data-target="entity">Add an Entity</div>
 				</div>
 
-				
 				<!--------------------------------------------------------------------------------------------------->
 				<!--------------------------------------Attachments of Atlas thing----------------------------------->
 				<!--------------------------------------------------------------------------------------------------->
-				
-				
-				
+
 				<div class="ui bottom attached tab segment" data-tab="attach">
 					<div class="ui fluid styled accordion">
 						<div class="subcontrol title">
@@ -1111,61 +1122,56 @@
 						</div>
 					</div>
 				</div>
-				
-				
-				
-				
-				
+
 				<!--------------------------------------------------------------------------------------------------->
 				<!-----------------------------------------HELP section---------------------------------------------->
 				<!--------------------------------------------------------------------------------------------------->
-				
+
 				<div class="ui bottom attached tab segment delegate" data-tab="help">
-					
+
 					<h4  class="ui header center"><i>What is an IoT-DDL?</i></h4>
 					<p>
-					IoT-DDL is an XML-based human- and machine-readable configuration scheme to describe a thing in IoT in terms of inner components, identity, 
+					IoT-DDL is an XML-based human- and machine-readable configuration scheme to describe a thing in IoT in terms of inner components, identity,
 					capabilities, resources, attachments and services. The IoT-DDL also describes the knowledge (social bonds and relationships)
-					injected or acquired by the thing, as well as the different interactions that engage the thing with cloud platforms, 
+					injected or acquired by the thing, as well as the different interactions that engage the thing with cloud platforms,
 					edges, users (e.g., end-user, developer) and space-mates (nearby things or remote ones).
 					</p>
-					
+
 					<br>
 					<br>
-					
+
 					<hr width=”50%”>
 					<h4  class="ui header center"><i>What is a thing? and Why do you need to develop an IoT-DDL for your thing?</i></h4>
 					<p>
-					A thing in an IoT ecosystem, as illustrated in the figure below, is a composition of a set of resources, entities, services, and attachments that work together to provide various interactions and are defined through a set of attributes and properties that influence essential internal services. 
-					A thing’s resources describe the shared components that a thing requires to be part of the IoT (e.g., network module, memory unit). 
-					A thing’s entities define the different hardware and software components that allow a smart space and its things to interact with it. 
-					These individual interactions are represented as services, functions with well-defined interfaces (APIs) that can be utilized by users or other things. 
+					A thing in an IoT ecosystem, as illustrated in the figure below, is a composition of a set of resources, entities, services, and attachments that work together to provide various interactions and are defined through a set of attributes and properties that influence essential internal services.
+					A thing’s resources describe the shared components that a thing requires to be part of the IoT (e.g., network module, memory unit).
+					A thing’s entities define the different hardware and software components that allow a smart space and its things to interact with it.
+					These individual interactions are represented as services, functions with well-defined interfaces (APIs) that can be utilized by users or other things.
 					A thing may also offer additional interactions through external attachments, or cloud-based resources that offer additional services (e.g., log server, database, dashboard).
 					Such configuration schemes are created by the thing vendor or owner and this then gets uploaded to the thing to enable the thing to self-discover its own power and engage with the surrounding IoT ecosystem.
-					
+
 						<div class="field">
 							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/ThingTaxnomy.jpg" style="width:50%; height:50%">
 						</div>
-						
+
 					</p>
-					
+
 					<br>
 					<br>
-					
-					
+
 					<hr width=”50%”>
 					<h4  class="ui header center"><i>What are the steps of building such IoT-DDL?</i></h4>
 					<p>
 					Five steps to build an Atlas_IoT-DDL.xml for your thing to be an Atlas thing
 					</p>
-					
+
 					<h5  class="ui header center"><i><b><u>Step1:</u></b></i></h5>
 					Under the "Descriptive Metadata" section, you can provide general information regarding your thing (e.g., name, description, vendor) along with information about the smart space that will accommodate your new smart thing (e.g., Living room, Bedroom).
 					Through this section, you can also provide the environmental/physical constraints your thing may need from the smart space for a safe operation (e.g., the minimum and maximum temperature of the smart space to accommodate your thing.
 						<div class="field">
 							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/DescriptiveMetadata.jpg" style="width:100%; height:100%">
 						</div>
-					
+
 					<br>
 					<br>
 					<h5  class="ui header center"><i><b><u>Step2:</u></b></i></h5>
@@ -1174,7 +1180,7 @@
 						<div class="field">
 							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/AdministrativeMetadata.jpg" style="width:100%; height:100%">
 						</div>
-					
+
 					<br>
 					<br>
 					<h5  class="ui header center"><i><b><u>Step3:</u></b></i></h5>
@@ -1182,7 +1188,7 @@
 						<div class="field">
 							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/EntitiesTab.jpg" style="width:100%; height:100%">
 						</div>
-					
+
 						<p>What is difference between an entity and a thing?</p>
 						<div class="two fields">
 							<div class="field">
@@ -1192,7 +1198,7 @@
 								<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/Entity2.jpg" style="width:100%; height:100%">
 							</div>
 						</div>
-						
+
 						<p>What is difference between a service offered by an entity, and a relationship?</p>
 						<div class="two fields">
 							<div class="field">
@@ -1202,7 +1208,7 @@
 								<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/relationship.gif" style="width:100%; height:100%">
 							</div>
 						</div>
-					
+
 					<br>
 					<br>
 					<h5  class="ui header center"><i><b><u>Step4:</u></b></i></h5>
@@ -1210,18 +1216,18 @@
 						<div class="field">
 							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/Attachments.jpg" style="width:100%; height:100%">
 						</div>
-					
+
 					<br>
 					<br>
 					<h5  class="ui header center"><i><b><u>Step5:</u></b></i></h5>
 					After you finish providing informaiton about your thing, the last step is to generate the IoT-DDL file.
-					Click on the "Generate" blue button placed at the bottom of the page, this will guide you to another dialog box to confirm the download.					
+					Click on the "Generate" blue button placed at the bottom of the page, this will guide you to another dialog box to confirm the download.
 						<div class="field">
 							<img src="https://raw.githubusercontent.com/AtlasFramework/IoT-DDL/master/Resources/download.jpg" style="width:20%; height:30%">
 						</div>
 				</div>
 			</div>
-			
+
 			<div class="ui container">
 				<div class="wide ui primary submit button">Generate</div>
 			</div>
@@ -1243,14 +1249,10 @@
 				</div></a>
 			</div>
 		</div>
-		
-		
-	
-				<!--------------------------------------------------------------------------------------------------->
-				<!-----------------------------------------Entities of Atlas thing----------------------------------->
-				<!--------------------------------------------------------------------------------------------------->		
-		
-		
+
+		<!--------------------------------------------------------------------------------------------------->
+		<!-----------------------------------------Entities of Atlas thing----------------------------------->
+		<!--------------------------------------------------------------------------------------------------->
 
 		<div id="templates">
 			<div class="title" id="section-title">
@@ -1280,8 +1282,7 @@
 						<input type="text" class="name" name="Atlas_Thing.Atlas_Entity.Entity_*.Descriptive_Metadata.Name" placeholder="add a short name to this entity"/>
 					</div>
 				</div>
-				
-				
+
 				<div class="four fields">
 					<div class="field">
 						<label>Owner <span class="ui icon help" data-content="Who is owner of this entity? (e.g., yourself, your company, your university)">
@@ -1295,7 +1296,7 @@
 						</span></label>
 						<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Descriptive_Metadata.Vendor" placeholder="identify the vendor of this entity"/>
 					</div>
-					
+
 					<div class="field">
 						<label>Category <span class="ui icon help" data-content="Is it a hardware entity?, or a software one?">
 							<i class="question circle icon"></i>
@@ -1319,21 +1320,21 @@
 						</select>
 					</div>
 				</div>
-				
+
 				<div class="field">
 					<label>Description <span class="ui icon help" data-content="Provide a short description of this entity.">
 						<i class="question circle icon"></i>
 					</span></label>
 					<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Descriptive_Metadata.Description" placeholder="add a short description on this entity"/>
 				</div>
-			
-			<!-------------------------------------------------------------------------------------->
-			<!-------------------------------------------------------------------------------------->
-			<!-------------------------------------------------------------------------------------->
+
+				<!-------------------------------------------------------------------------------------->
+				<!-------------------------------------------------------------------------------------->
+				<!-------------------------------------------------------------------------------------->
 
 				<br>
 				<br>
-				<h4 class="ui dividing header">Services 
+				<h4 class="ui dividing header">Services
 						<span class="ui icon help" data-content="Define the different functionalities this entity provides to your smart space (e.g., smart lamp can turn on, turn off, and change the brightness)">
 							<i class="question circle icon"></i>
 						</span>
@@ -1343,11 +1344,10 @@
 				</div>
 				<br/>
 				<div class="ui add-section button" data-target="service">Add a Service</div>
-				
-				
+
 				<br>
 				<br>
-				<h4 class="ui dividing header">Unbounded Services 
+				<h4 class="ui dividing header">Unbounded Services
 						<span class="ui icon help" data-content="Define the different functionalities not offered by this entity but may be offered by other things in the smart space that your services may cooperate or compete with (e.g., your entity prepares coffee, so a nice IoT application can be built if there is an alarm clock that can trigger the coffee machine by 6am)">
 							<i class="question circle icon"></i>
 						</span>
@@ -1357,8 +1357,7 @@
 				</div>
 				<br/>
 				<div class="ui add-section button" data-target="unbounded">Add an Unbounded Service</div>
-				
-				
+
 				<br>
 				<br>
 				<h4 class="ui dividing header">Relationships
@@ -1372,12 +1371,10 @@
 				<br/>
 				<div class="ui add-section button" data-target="relationship">Add a Relationship</div>
 			</div>
-			
-			
+
 			<!-------------------------------------------------------------------------------------->
 			<!-------------------------------------------------------------------------------------->
 			<!-------------------------------------------------------------------------------------->
-			
 
 			<div class="content delegate" style="background-color: #f4fafc;" id="service">
 				<h4 class="ui dividing header">Service information</h4>
@@ -1423,7 +1420,7 @@
 						</select>
 					</div>
 				</div>
-				
+
 				<div class="field">
 					<label>Keywords <span class="ui icon help" data-content="A set of keywords describing the offered functionality and the nature of an IoT application that can use this service (e.g., for a coffee machine service: morning, breakfast, energy, work)">
 						<i class="question circle icon"></i>
@@ -1431,27 +1428,22 @@
 					<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Keywords" placeholder="place a set of keywords (separated by commas) describing the functionality and nature of the service "></select>
 					<!--<select multiple="" class="ui fluid dropdown search" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Keywords" placeholder="place a set of keywords (separated by commas) describing the functionality and nature of the service "></select>-->
 				</div>
-				
+
 				<div class="field">
 					<label>Description <span class="ui icon help" data-content="How can you describe the functionality offered by this service?">
 						<i class="question circle icon"></i>
 						</span></label>
 					<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Description" placeholder="add a short description on the offered service"/>
 				</div>
-				
-				
+
 				<br>
 				<h4  class="ui header center"><i>A constraint represents a precondition to the behavior of the service to avoid harmful use of the service and to avoid introducing unsafe state for the smart space</i></h4>
 				<h4  class="ui header center"><i>use the following dialog to place the different contextual and temporal constraint on this service</i></h4>
 				<br>
-				
-				
 
 				<h4 class="ui dividing header">Contextual Constraints<span class="ui icon help" data-content="Ignoring safety puts the operation of the service and thing in danger of improper or harmful use and the smart space in unsafe state.(e.g., an automatic door opener with a strike-push mechanism getting invoked 50,000 times per second due to a bug in the program.)">
 					<i class="question circle icon"></i>
 				</span></h4>
-				
-				
 
 				<div class="field">
 					<label>Time Window<span class="ui icon help" data-content="the safe time (in seconds) that separates consecutive calls to the offered service, this window represents how long (in seconds) does the service take to complete the task">
@@ -1459,8 +1451,7 @@
 					</span></label>
 					<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Contextual_Constraints.Time_Window" value="30seconds"/>
 				</div>
-				
-				
+
 				<div class="two fields">
 					<div class="field">
 						<label>Usage Mode<span class="ui icon help" data-content="Can this service be engaged in multiple applications at the same time?">
@@ -1483,8 +1474,7 @@
 						</select>
 					</div>
 				</div>
-				
-				
+
 				<h4 class="ui dividing header">Temporal Constraints <span class="ui icon help" data-content="Temporal constraints deal with the acceptable time interval(s) for the work of this service and the acceptable time interval(s) to allow user trigger for the offered service (e.g., a user can start the microwave any time between 8:00am and 10:00pm, otherwise the device must remain off).">
 					<i class="question circle icon"></i>
 				</span></h4>
@@ -1515,13 +1505,10 @@
 					</table>
 				</div>
 
-				
-				
-				
 				<br>
 				<h4  class="ui header center"><i>use the following dialog to build the functionality of this service in terms of defining the required inputs, expected output, and developing the C/C++-based code from ready available APIs</i></h4>
 				<br>
-				
+
 				<h4 class="ui dividing header">Service Inputs <span class="ui icon help" data-content="define the inputs (if any) required for the operation of this service (e.g., turn on light by certain time, so time is an input that should be provided in the call)">
 					<i class="question circle icon"></i>
 				</span></h4>
@@ -1543,22 +1530,20 @@
 						</td>
 					</tr></tbody>
 				</table>
-				
-				
+
 				<h4 class="ui dividing header">Service Output <span class="ui icon help" data-content="define the expected output from running this service (e.g., temperature sensor returns the current room temperature in C)">
 					<i class="question circle icon"></i>
 				</span></h4>
-				
+
 				<div class="two fields">
-					
+
 					<div class="field">
 						<label>Name <span class="ui icon help" data-content="provide short description of the output (e.g., the returned value from the temperature sensor is Celsius)"">
 							<i class="question circle icon"></i>
 						</span></label>
 						<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.OutputDescription"/>
 					</div>
-						
-						
+
 					<div class="field">
 						<label>Data Type <span class="ui icon help" data-content="provide the data type of the output">
 							<i class="question circle icon"></i>
@@ -1571,20 +1556,22 @@
 							<option value="bool">Boolean (True or False)</option>
 						</select>
 					</div>
+
 				</div>
-				
+
 				<h4 class="ui dividing header">Functionality <span class="ui icon help" data-content="use the window below to develop the C/C++ functionality of this service">
 					<i class="question circle icon"></i>
 				</span></h4>
 
 				<div class="functionality">
 					<div class="field">
-						<textarea class="editor" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Service_Formula"> 
-							// ~ Service body C/C++ code block ~
-							// You can use the inputs you defined above by name
-							// Any return values should match the specified output type
-						
-						</textarea>
+<!-- Keep this unindented to prevent the idents from showing up in the textarea. -->
+<textarea class="editor" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Service_Formula">
+// ~ Service body C/C++ code block ~
+// You can use the inputs you defined above by name
+// Any return values should match the specified output type
+
+</textarea>
 					</div>
 
 					<div class="ui horizontal divider">you can also use the general platform-free APIs below to develop your code</div>
@@ -1684,9 +1671,6 @@
 				</tr></tbody>
 			</table>
 
-			
-			
-			
 			<div class="content delegate" style="background-color: #fff9f9" id="unbounded">
 				<h4 class="ui dividing header">Unbounded service information
 						<span class="ui icon help" data-content="Define a virtual functionality not offered by this entity but may be offered by other things in the smart space that your services may cooperate or compete with (e.g., your entity prepares coffee, so a nice IoT application can be built if there is an alarm clock that can trigger the coffee machine by 6am)">
@@ -1701,7 +1685,7 @@
 						</span></label>
 						<input type="text" class="name" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.Name" placeholder="add a descriptive name on this virtual service"/>
 					</div>
-					
+
 					<div>
 						<label>Description <span class="ui icon help" data-content="Provide a description for this virtual service.">
 							<i class="question circle icon"></i>
@@ -1709,12 +1693,11 @@
 						<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.Description"   placeholder="add a description on this virtual service."/>
 					</div>
 				</div>
-				
+
 				<h4 class="ui dividing header">Matching Parameters <span class="ui icon help" data-content="for your smart thing to find a match between this virtual service and other services offered by smart things in your smart space, complete the attributes below to guide such match operation">
 					<i class="question circle icon"></i>
 				</span></h4>
-				
-				
+
 				<div class="three fields">
 					<div class="field">
 						<label>Type <span class="ui icon help" data-content="What is the type of this virtual service? (e.g., does it report data, or perform an action)">
@@ -1749,25 +1732,13 @@
 				</div>
 
 			</div>
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 
 			<div class="content delegate" style="background-color: #f3ffea" id="relationship">
 				<h4 class="ui dividing header">Relationship information <span class="ui icon help" data-content="Define the different functional links and relationships between different services and unbounded services (e.g., alarm clock can trigger the coffee machine to prepare morning coffee)">
 							<i class="question circle icon"></i>
 						</span>
 				</h4>
-				
+
 				<div class="fields">
 					<div class="four wide field">
 						<label>Name <span class="ui icon help" data-content="Provide a descriptive name to this relationship">
