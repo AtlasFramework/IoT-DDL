@@ -262,8 +262,8 @@
 							descs += (descs == '') ? `"${d}"` : `,"${d}"`;
 						}
 
-						//ss[s]['Service_InputTypes'] = types;
-						//ss[s]['Service_InputDescriptions'] = descs;
+						ss[s]['Service_InputTypes'] = types;
+						ss[s]['Service_InputDescriptions'] = descs;
 
 						delete ss[s]['Service_Inputs'];
 
@@ -1425,8 +1425,11 @@
 					<label>Keywords <span class="ui icon help" data-content="A set of keywords describing the offered functionality and the nature of an IoT application that can use this service (e.g., for a coffee machine service: morning, breakfast, energy, work)">
 						<i class="question circle icon"></i>
 						</span></label>
-					<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Keywords" placeholder="place a set of keywords (separated by commas) describing the functionality and nature of the service "></select>
-					<!--<select multiple="" class="ui fluid dropdown search" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Keywords" placeholder="place a set of keywords (separated by commas) describing the functionality and nature of the service "></select>-->
+					<!--<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Keywords" placeholder="place a set of keywords (separated by commas) describing the functionality and nature of the service "></select>-->
+					<div multiple="" class="ui fluid fluid multiple search selection dropdown">
+						<input type="hidden" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Keywords">
+						<div class="default text">Place a set of keywords (separated by commas) describing the functionality and nature of the service</div>
+					</div>
 				</div>
 
 				<div class="field">
@@ -1714,13 +1717,19 @@
 						<label>Vendors <span class="ui icon help" data-content="Who can be the vendors (comma separated) of this virtual service? (e.g., Samsung, Wemo).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select multiple="" class="ui fluid dropdown search" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchVendor"  placeholder="identify the vendor of this virtual entity"></select>
+						<div multiple="" class="ui fluid fluid multiple search selection dropdown">
+							<input type="hidden" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchVendor">
+							<div class="default text">Identify the vendor of this virtual entity</div>
+						</div>
 					</div>
 					<div class="field">
 						<label>Keywords <span class="ui icon help" data-content="A set of keywords describing the nature and functionality of this virtual service">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select multiple="" class="ui fluid dropdown search" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchKeywords" placeholder="place a set of keywords (separated by commas) describing the functionality and nature of this virtual service "></select>
+						<div multiple="" class="ui fluid fluid multiple search selection dropdown">
+							<input type="hidden" name="Atlas_Thing.Atlas_Entity.Entity_*.UnboundedService.UB_*.MatchKeywords">
+							<div class="default text">Place a set of keywords (separated by commas) describing the functionality and nature of this virtual service</div>
+						</div>
 					</div>
 				</div>
 
