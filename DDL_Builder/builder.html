@@ -320,7 +320,12 @@
 					if (e != 'WiFi')
 						mode = 'none';
 
-					$('#network-fields').css({ 'display': mode });
+					$('#wifi-fields').css({ 'display': mode });
+
+					if (e == 'Ethernet')
+						mode = 'flex';
+
+					$('#ip-fields').css({ 'display': mode });
 				});
 
 				$('.delegate').on('click', '.ui.add-section', function (e) {
@@ -758,7 +763,7 @@
 							</span></label>
 							<select class="ui fluid dropdown" id="update-network" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Module">
 								<option value="" disabled selected>Select the network technology or module</option>
-								<option value="Wifi">WiFi (your thing has a wireless connection to the router</option>
+								<option value="WiFi">WiFi (your thing has a wireless connection to the router</option>
 								<option value="Ethernet">Ethernet (your thing has a wired connected to the router)</option>
 								<option value="Bluetooth">Bluetooth</option>
 								<option value="BLE">Bluetooth Low Energy</option>
@@ -776,7 +781,7 @@
 						</div>
 					</div>
 
-					<div class="two fields" id="network-fields">
+					<div class="two fields" id="wifi-fields">
 						<div class="field">
 							<label>Network Name (SSID) <span class="ui icon help" data-content="In case you select Wifi, provide the name of your network (e.g., the name of your home Wifi)">
 								<i class="question circle icon"></i>
@@ -788,6 +793,21 @@
 								<i class="question circle icon"></i>
 							</span></label>
 							<input type="password" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Network_Passcode"  placeholder="place the passcode of network to join"/>
+						</div>
+					</div>
+
+					<div class="two fields" id="ip-fields">
+						<div class="field">
+							<label>Multicast Address <span class="ui icon help" data-content="">
+								<i class="question circle icon"></i>
+							</span></label>
+							<input type="text" name="" value="232.1.1.1"/>
+						</div>
+						<div class="field">
+							<label>Multicast Port <span class="ui icon help" data-content="">
+								<i class="question circle icon"></i>
+							</span></label>
+							<input type="text" name="" value="1235"/>
 						</div>
 					</div>
 
@@ -1554,9 +1574,9 @@
 						<select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.OutputType">
 							<option value="void">void (nothing)</option>
 							<option value="int">Integer (non decimal number)</option>
-							<option value="float">Floating point (decimal number)</option>
-							<option value="const char*">String (set of characters and digits)</option>
-							<option value="bool">Boolean (True or False)</option>
+							<option value="float" disabled>Floating point (decimal number)</option>
+							<option value="const char*" disabled>String (set of characters and digits)</option>
+							<option value="bool" disabled>Boolean (True or False)</option>
 						</select>
 					</div>
 
@@ -1666,9 +1686,9 @@
 						<div class="field"><select class="ui fluid dropdown" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Inputs.Input_*.Input_Type">
 							<option value="" disabled selected>Select the type of the input</option>
 							<option value="int">Integer (non decimal number)</option>
-							<option value="float">Floating point (decimal number)</option>
-							<option value="const char*">String (set of characters and digits)</option>
-							<option value="bool">Boolean (True or False)</option>
+							<option value="float" disabled>Floating point (decimal number)</option>
+							<option value="const char*" disabled>String (set of characters and digits)</option>
+							<option value="bool" disabled>Boolean (True or False)</option>
 						</select></div>
 					</td>
 				</tr></tbody>
