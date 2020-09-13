@@ -230,6 +230,9 @@
 					for (let s in ss)
 						updateKey(ss, s, 'Service_' + sn++);
 
+					es[e]['Services']['Number_Services'] = sn;
+
+					
 					let us = es[e]['UnboundedService'];
 					let un = 1;
 
@@ -244,6 +247,11 @@
 
 					updateKey(es, e, 'Entity_' + en++);
 				}
+				
+				obj['Atlas_IoTDDL']['Atlas_Thing']['Structural_Metadata']['Number_Entities'] = en;
+				
+				
+				
 			};
 			let repairInputs = function(obj) {
 				let es = obj['Atlas_Thing']['Atlas_Entity'];
