@@ -10,13 +10,14 @@ Such configuration schemes are created by the thing vendor or owner and this the
   <img src="https://github.com/AtlasFramework/IoT-DDL/blob/master/Resources/ThingTaxnomy.jpg" width="700" height="550" title="The Architecture">
 </p>
 
-## Read more about it in the following paper:
-> - Khaled, Ahmed E., Abdelsalam Helal, Wyatt Lindquist, and Choonhwa Lee. [IoT-DDL–device description language for the “T” in IoT.](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8334820) IEEE Access 6 (2018): 24048-24063.
 
-
-## Here is the latest version of the IoT-DDL Builder and some examples:
+## Access the latest version of the IoT-DDL Builder:
 > - [Use this tool to build an IoT-DDL file for your Atlas thing.](https://atlasframework.github.io/IoT-DDL/DDL_Builder/builder.html)
-> - [Example for Coffee Machine IoT-DDL.](https://github.com/AtlasFramework/IoT-DDL/blob/master/Resources/Coffee_Machine_IoTDDL.xml)
+> - [Example for a Coffee Machine IoT-DDL.](https://github.com/AtlasFramework/IoT-DDL/blob/master/Resources/Coffee_Machine_IoTDDL.xml)
+
+
+## Read more about IoT-DDL through the following paper:
+> - Khaled, Ahmed E., Abdelsalam Helal, Wyatt Lindquist, and Choonhwa Lee. [IoT-DDL–device description language for the “T” in IoT.](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8334820) IEEE Access 6 (2018): 24048-24063.
 
 
 ## Check the other parts of the framework:
