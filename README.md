@@ -14,8 +14,8 @@ Such configuration schemes are created by the thing vendor or owner and this the
 > - Khaled, Ahmed E., Abdelsalam Helal, Wyatt Lindquist, and Choonhwa Lee. [IoT-DDL–device description language for the “T” in IoT.](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8334820) IEEE Access 6 (2018): 24048-24063.
 
 
-## Also check the live version of the IoT-DDL Builder and some examples:
-> - [This tool allows you to interactively build an IoT-DDL file for an Atlas thing.](https://atlasframework.github.io/IoT-DDL/DDL_Builder/builder.html)
+## Here is the latest version of the IoT-DDL Builder and some examples:
+> - [Use this tool to build an IoT-DDL file for your Atlas thing.](https://atlasframework.github.io/IoT-DDL/DDL_Builder/builder.html)
 > - [Example for Coffee Machine IoT-DDL.](https://github.com/AtlasFramework/IoT-DDL/blob/master/Resources/Coffee_Machine_IoTDDL.xml)
 
 
