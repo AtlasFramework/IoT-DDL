@@ -220,8 +220,14 @@
 				delete obj[oldkey];
 			};
 			let repairIndices = function(obj) {
-				let es = obj['Atlas_Thing']['Atlas_Entity'];
+				let es = obj['Atlas_Entities'];
 				let en = 1;
+
+				let meta = {
+					'Number_Hardware': 0,
+					'Number_Software': 0,
+					'Number_Hybrid': 0
+				};
 
 				for (let e in es) {
 					let ss = es[e]['Services'];
@@ -229,8 +235,11 @@
 
 					for (let s in ss)
 						updateKey(ss, s, 'Service_' + sn++);
+					if (ss)
+						ss['Number_Services'] = sn - 1;
+					else
+						es[e]['Services'] = { 'Number_Services': 0 };
 
-					
 					let us = es[e]['UnboundedService'];
 					let un = 1;
 
@@ -243,12 +252,22 @@
 					for (let r in rs)
 						updateKey(rs, r, 'Relationship_' + rn++);
 
+					console.log(es[e]['Descriptive_Metadata']['Category']);
+					switch (es[e]['Descriptive_Metadata']['Category']) {
+						case 'Hardware': meta['Number_Hardware']++; break;
+						case 'Software': meta['Number_Software']++; break;
+						case 'Hybrid':   meta['Number_Hybrid']++;   break;
+					}
+
 					updateKey(es, e, 'Entity_' + en++);
 				}
-				
+
+				meta['Number_Entities'] = en - 1;
+				obj['Atlas_Thing']['Structural_Metadata'] = meta;
+
 			};
 			let repairInputs = function(obj) {
-				let es = obj['Atlas_Thing']['Atlas_Entity'];
+				let es = obj['Atlas_Thing']['Atlas_Entities'];
 				for (let e in es) {
 					let ss = es[e]['Services'];
 					for (let s in ss) {
@@ -530,12 +549,13 @@
 						repairInputs(ddl);
 						repairAttachments(ddl);
 
+						let xml = toXML({ 'Atlas_IoTDDL': ddl });
 						$('#download-button').attr({
-							href: 'data:text/plain;charset=UTF-8,' + encodeURIComponent(toXML(ddl)),
+							href: 'data:text/plain;charset=UTF-8,' + encodeURIComponent(xml),
 							download: 'Atlas_IoTDDL.xml',
 						});
 
-						console.log(toXML(ddl));
+						console.log(xml);
 
 						$('#download-modal').modal('show');
 						return false;
@@ -577,14 +597,14 @@
 							<label>ID <span class="ui icon help" data-content="A unique identifier for your Atlas thing; a combination of characters and digits (e.g., AT_SmartLamp23).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Thing_ATID" placeholder="place a unique identifier to your thing"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ATID" value="MySmartThing01" placeholder="place a unique identifier to your thing"/>
 						</div>
 
 						<div class="field">
 							<label>Name <span class="ui icon help" data-content="What is your Atlas thing? (e.g., Smart Lamp, DVD Player).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Thing_Name" placeholder="add a short name to your thing"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Name" placeholder="add a short name to your thing"/>
 						</div>
 					</div>
 
@@ -594,28 +614,28 @@
 							<label>Owner <span class="ui icon help" data-content="Who is owner of your smart thing? (e.g., yourself, your company, your university).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Thing_Owner" placeholder="identify who owns this thing"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Owner" placeholder="identify who owns this thing"/>
 						</div>
 
 						<div class="field">
 							<label>Vendor <span class="ui icon help" data-content="Who is vendor of your smart thing? (e.g., Samsung, Wemo, or your are the vendor).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Thing_Vendor" placeholder="identify the vendor of your thing"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Vendor" placeholder="identify the vendor of your thing"/>
 						</div>
 
 						<div class="field">
 							<label>Model <span class="ui icon help" data-content="What is the model of this thing? (e.g., Samsung S8+, WeMo 2nd Gen).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Thing_Model"  placeholder="identify the model of your thing"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_Model"  placeholder="identify the model of your thing"/>
 						</div>
 
 						<div class="field">
 							<label>Release Date <span class="ui icon help" data-content="What is the release month/year of your smart thing?">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Thing_ReleaseDate" value="8/2020"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ReleaseDate" value="8/2020"/>
 						</div>
 					</div>
 
@@ -623,7 +643,7 @@
 							<label>Type <span class="ui icon help" data-content="Is your thing is an Edge device, sofware application, or other?">
 								<i class="question circle icon"></i>
 							</span></label>
-							<select class="ui fluid dropdown" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Thing_Type">
+							<select class="ui fluid dropdown" name="Atlas_Thing.Descriptive_Metadata.Thing_Type">
 								<option value="" disabled selected>Select the type of your thing</option>
 								<option value="Thing of Things">Platform Thing (e.g., Arduino, Libelium, Beaglebone, Raspberry Pi)</option>
 								<option value="Thing of Things" disabled>Sensor Mote Thing (e.g., WiSense, MICA)</option>
@@ -639,7 +659,7 @@
 							<label>Operating System <span class="ui icon help" data-content="What is the operating system that runs your thing? (e.g., Raspberry Linux for Raspberry Pi, Android for Smartphone).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<select class="ui fluid dropdown" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Thing_OperatingSystem">
+							<select class="ui fluid dropdown" name="Atlas_Thing.Descriptive_Metadata.Thing_OperatingSystem">
 								<option value="" disabled selected>Select the operating system/kernel that runs your thing</option>
 								<option value="Raspbian"> Raspberry Linux (e.g., Raspberry Pi Model B, Raspberry Pi Model A) </option>
 								<option value="Debian"> Debian Linux (e.g., Beaglebone)</option>
@@ -653,14 +673,14 @@
 						<label>Description <span class="ui icon help" data-content="A short description for the function of your thing.">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Thing_ShortDescription"  placeholder="add a short description on the nature your thing"/>
+						<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_ShortDescription"  placeholder="add a short description on the nature your thing"/>
 					</div>
 
 					<div class="field">
 						<label>Comments <span class="ui icon help" data-content="Describe your thing in more detail.">
 							<i class="question circle icon"></i>
 						</span></label>
-						<textarea name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.LongDescription" placeholder="add more comments describing your thing"></textarea>
+						<textarea name="Atlas_Thing.Descriptive_Metadata.LongDescription" placeholder="add more comments describing your thing"></textarea>
 					</div>
 
 					<br>
@@ -674,13 +694,13 @@
 							<label>ID <span class="ui icon help" data-content="A unique identifier for your smart space where you deploy the thing; a combination of characters and digits (e.g., ST_Living345). this is a common to all devices in the same smart space.">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Thing_SSID" placeholder="place a unique identifier to your smart space"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Thing_SSID" value="MySmartSpace" placeholder="place a unique identifier to your smart space"/>
 						</div>
 						<div class="field">
 							<label>Coordinates <span class="ui icon help" data-content="The approximated GPS coordinates of your smart space: LAX, LAT.">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Space_Coordinates" placeholder="provide the GPS coordinates of your smart space (e.g., 41.9, -87.7)"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Coordinates" placeholder="provide the GPS coordinates of your smart space (e.g., 41.9, -87.7)"/>
 						</div>
 					</div>
 
@@ -688,7 +708,7 @@
 							<label>Name <span class="ui icon help" data-content="What is your smart space? (e.g., living Room, Kitchen).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<select class="ui fluid dropdown" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Space_Name">
+							<select class="ui fluid dropdown" name="Atlas_Thing.Descriptive_Metadata.Space_Name">
 								<option value="" disabled selected>Select the name of location you deploy your thing</option>
 								<option value="Bedroom">Bedroom</option>
 								<option value="Living Room">Living Room</option>
@@ -702,7 +722,7 @@
 						<label>Description <span class="ui icon help" data-content="Provide a short description of your smart space (e.g., master bedroom of the house).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Space_Description"   placeholder="add a short description on the smart space"/>
+						<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Description"   placeholder="add a short description on the smart space"/>
 					</div>
 
 					<div class="field">
@@ -718,16 +738,16 @@
 							<tbody>
 								<tr><td>Temperature</td>
 
-									<td><input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Space_Constraints.Temperature.Lower_Bound" placeholder="10C"/></td>
-								    	<td><input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Space_Constraints.Temperature.Upper_Bound" placeholder="35C"/></td></tr>
+									<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Temperature.Lower_Bound" placeholder="10C"/></td>
+								    	<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Temperature.Upper_Bound" placeholder="35C"/></td></tr>
 
 								<tr><td>Humidity</td>
-									<td><input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Space_Constraints.Humidity.Lower_Bound" placeholder="10%"/></td>
-								    	<td><input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Space_Constraints.Humidity.Upper_Bound" placeholder="40%"/></td></tr>
+									<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Humidity.Lower_Bound" placeholder="10%"/></td>
+								    	<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Humidity.Upper_Bound" placeholder="40%"/></td></tr>
 
 								<tr><td>Voltage</td>
-									<td><input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Space_Constraints.Voltage.Lower_Bound" placeholder="110V"/></td>
-								    	<td><input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Space_Constraints.Voltage.Upper_Bound" placeholder="220V"/></td></tr>
+									<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Voltage.Lower_Bound" placeholder="110V"/></td>
+								    	<td><input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Voltage.Upper_Bound" placeholder="220V"/></td></tr>
 							</tbody>
 						</table>
 					</div>
@@ -737,13 +757,13 @@
 							<label>Radio Interference Radius <span class="ui icon help" data-content="if your thing uses radio waves for operation, define the radio radius to avoid interference with other devices in the smart space">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Space_Constraints.Radio_Interference_Radius" placeholder="0"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Radio_Interference_Radius" placeholder="0"/>
 						</div>
 						<div class="field">
 							<label>Safe Temperature Radius <span class="ui icon help" data-content="if your thing produces heat when turned on, define the heat radius to avoid interference with other devices in the smart space">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata.Space_Constraints.Safe_Temperature_Radius" placeholder="0"/>
+							<input type="text" name="Atlas_Thing.Descriptive_Metadata.Space_Constraints.Safe_Temperature_Radius" placeholder="0"/>
 						</div>
 					</div>
 
@@ -763,7 +783,7 @@
 							<label>Technology <span class="ui icon help" data-content="Which network module is equipped by your thing? (e.g., WiFi, Bluetooth).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<select class="ui fluid dropdown" id="update-network" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.Module">
+							<select class="ui fluid dropdown" id="update-network" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Module">
 								<option value="" disabled selected>Select the network technology or module</option>
 								<option value="WiFi">WiFi (your thing has a wireless connection to the router</option>
 								<option value="Ethernet">Ethernet (your thing has a wired connected to the router)</option>
@@ -775,7 +795,7 @@
 							<label>Type <span class="ui icon help" data-content="What is the type of such network module? (e.g., build in module to your thing).">
 								<i class="question circle icon"></i>
 							</span></label>
-							<select class="ui fluid dropdown" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.Type">
+							<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Type">
 								<option value="" disabled selected>Select the type of network module</option>
 								<option value="Built-In">Built-In on your thing</option>
 								<option value="Attached">Attached to your thing</option>
@@ -788,13 +808,13 @@
 							<label>Network Name (SSID) <span class="ui icon help" data-content="In case you select Wifi, provide the name of your network (e.g., the name of your home Wifi)">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.Network_Name" value="MySpaceNetwork"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Network_Name" value="MySpaceNetwork"/>
 						</div>
 						<div class="field">
 							<label>Network Password (PSK) <span class="ui icon help" data-content="In case you select Wifi, provide the passcode of your network (e.g., the passcode of your home Wifi)">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="password" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.Network_Passcode" value="MySpaceNetwork"/>
+							<input type="password" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Network_Passcode" value="MySpaceNetwork"/>
 						</div>
 					</div>
 
@@ -803,22 +823,22 @@
 							<label>Multicast Address <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.MulticastGroup.IP" value="232.1.1.1"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.MulticastGroup.IP" value="232.1.1.1"/>
 						</div>
 						<div class="field">
 							<label>Multicast Port <span class="ui icon help" data-content="">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.MulticastGroup.Port" value="1235"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.MulticastGroup.Port" value="1235"/>
 						</div>
 					</div>
-					
+
 
 					<div class="field">
 						<label>Communication Protocol <span class="ui icon help" data-content="Which communication protocol does your thing use for communication? (e.g., REST-HTTP).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.Communication_Protocol">
+						<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Network_Manager.Communication_Protocol">
 							<option value="" disabled selected>Select the communication protocol your thing use</option>
 							<option value="Sockets"> TCP/IP Sockets</option>
 							<option value="MQTT">MQTT: Message Queuing Telemetry Transport</option>
@@ -838,13 +858,13 @@
 							<label>Broker Vendor <span class="ui icon help" data-content="The vendor of the global/local broker to enable the inter-operable communication between things">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Vendor" value="HiveMQ"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Vendor" value="HiveMQ"/>
 						</div>
 						<div class="field">
 							<label>Broker Dashboard <span class="ui icon help" data-content="The online dashboard of the global/local broker if existed">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Dashboard" value="http://www.mqtt-dashboard.com/"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Dashboard" value="http://www.mqtt-dashboard.com/"/>
 						</div>
 					</div>
 
@@ -853,13 +873,13 @@
 							<label>Broker IP <span class="ui icon help" data-content="The Internet address (IP) of the global or local broker for the inter-operable communication">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.IP" value="broker.hivemq.com"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.IP" value="broker.hivemq.com"/>
 						</div>
 						<div class="field">
 							<label>Broker Port <span class="ui icon help" data-content="The Port address of the global or local broker for the inter-operable communication">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Port" value="1883"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Broker.Port" value="1883"/>
 						</div>
 					</div>
 
@@ -874,18 +894,18 @@
 								<th>Path</th>
 							</thead>
 							<tbody>
-								<tr><td>Root</td><td>				<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Root" 						value="/Atlas"/></td></tr>
-								<tr><td>Network MQTT Client</td><td>		<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Network_MQTTClient" 			value="/Network/MQTT_Client"/></td></tr>
-								<tr><td>Network Private Broker</td><td>		<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Network_PrivateBroker" 		value="/Network/Private_Broker"/></td></tr>
-								<tr><td>Multicast Thing Identity</td><td>	<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Multicast_ThingIdentity" 		value="/Multicast/Tweet_ThingIdentity"/></td></tr>
-								<tr><td>Multicast Entity Identity</td><td>	<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Multicast_EntityIdentity" 	value="/Multicast/Tweet_EntityIdentity"/></td></tr>
-								<tr><td>Multicast API</td><td>			<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Multicast_API" 				value="/Multicast/API"/></td></tr>
-								<tr><td>Unicast</td><td>			<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Unicast" 						value="/Unicast/Interaction"/></td></tr>
+								<tr><td>Root</td><td>				<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Root" 						value="/Atlas"/></td></tr>
+								<tr><td>Network MQTT Client</td><td>		<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Network_MQTTClient" 			value="/Network/MQTT_Client"/></td></tr>
+								<tr><td>Network Private Broker</td><td>		<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Network_PrivateBroker" 		value="/Network/Private_Broker"/></td></tr>
+								<tr><td>Multicast Thing Identity</td><td>	<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Multicast_ThingIdentity" 		value="/Multicast/Tweet_ThingIdentity"/></td></tr>
+								<tr><td>Multicast Entity Identity</td><td>	<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Multicast_EntityIdentity" 	value="/Multicast/Tweet_EntityIdentity"/></td></tr>
+								<tr><td>Multicast API</td><td>			<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Multicast_API" 				value="/Multicast/API"/></td></tr>
+								<tr><td>Unicast</td><td>			<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.InterOperableCommunication.Topic.Unicast" 						value="/Unicast/Interaction"/></td></tr>
 							</tbody>
 						</table>
 					</div>
-					
-					
+
+
 
 					<br>
 					<h4  class="ui header center"><i>use the following dialog to enable the remote management, using OMA-DM LwM2M protocol, for your thing</i></h4>
@@ -898,19 +918,19 @@
 							<label>Vendor <span class="ui icon help" data-content="The vendor of the global or local device management server">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.OMA_DM.AccessName" value="Eclipse Leshan"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA_DM.AccessName" value="Eclipse Leshan"/>
 						</div>
 						<div class="four wide field">
 							<label>IP Address <span class="ui icon help" data-content="The Internet address (IP) of the global or local device management server">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.OMA_DM.IP" value="coap://leshan.eclipseprojects.io"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA_DM.IP" value="coap://leshan.eclipseprojects.io"/>
 						</div>
 						<div class="four wide field">
 							<label>Port <span class="ui icon help" data-content="The Port address of the global or local device management server">
 								<i class="question circle icon"></i>
 							</span></label>
-							<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Network_Manager.OMA_DM.Port" value="5683"/>
+							<input type="text" name="Atlas_Thing.Administrative_Metadata.Network_Manager.OMA_DM.Port" value="5683"/>
 						</div>
 					</div>
 
@@ -921,7 +941,7 @@
 							<label>Storage Format <span class="ui icon help" data-content="Select the format to store data and information on thing ">
 								<i class="question circle icon"></i>
 							</span></label>
-							<select class="ui fluid dropdown" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Memory_Manager.Store_Format">
+							<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Memory_Manager.Store_Format">
 								<option value="" disabled selected>Select the storage format</option>
 								<option>Binary</option>
 								<option>Plaintext</option>
@@ -931,7 +951,7 @@
 							<label>Application Storage <span class="ui icon help" data-content="Select the storage unit to store IoT application/recipes on thing">
 								<i class="question circle icon"></i>
 							</span></label>
-							<select class="ui fluid dropdown" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Memory_Manager.MemoryUnit_Application">
+							<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Memory_Manager.MemoryUnit_Application">
 								<option value="" disabled selected>Select the storage unit</option>
 								<option>RAM</option>
 								<option>Flash</option>
@@ -941,7 +961,7 @@
 							<label>Knowledge Storage <span class="ui icon help" data-content="Select the storage unit to store IoT knowledge either received from the uploaded IoTDDL or received from other things in the smart space through tweets">
 								<i class="question circle icon"></i>
 							</span></label>
-							<select class="ui fluid dropdown" name="Atlas_IoTDDL.Atlas_Thing.Administrative_Metadata.Memory_Manager.MemoryUnit_Knowledge">
+							<select class="ui fluid dropdown" name="Atlas_Thing.Administrative_Metadata.Memory_Manager.MemoryUnit_Knowledge">
 								<option value="" disabled selected>Select the storage unit</option>
 								<option>RAM</option>
 								<option>Flash</option>
@@ -974,7 +994,7 @@
 							<table class="wide"><tr>
 								<td><i class="dropdown icon"></i> Interactions Repository</td>
 								<td align="right"><div class="ui fitted toggle checkbox control">
-									<input type="checkbox" name="Atlas_IoTDDL.Atlas_Thing.Thing_Attachment.Interactions_Repository.Enabled"/>
+									<input type="checkbox" name="Atlas_Thing.Thing_Attachment.Interactions_Repository.Enabled"/>
 									<label></label>
 								</div></td>
 							</tr></table>
@@ -985,13 +1005,13 @@
 									<label>URI <span class="ui icon help" data-content="">
 										<i class="question circle icon"></i>
 									</span></label>
-									<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Thing_Attachment.Interactions_Repository.URI"/>
+									<input type="text" name="Atlas_Thing.Thing_Attachment.Interactions_Repository.URI"/>
 								</div>
 								<div class="field">
 									<label>Message Format <span class="ui icon help" data-content="">
 										<i class="question circle icon"></i>
 									</span></label>
-									<select class="ui fluid dropdown" name="Atlas_IoTDDL.Atlas_Thing.Thing_Attachment.Interactions_Repository.MessageFormat">
+									<select class="ui fluid dropdown" name="Atlas_Thing.Thing_Attachment.Interactions_Repository.MessageFormat">
 										<option>Binary</option>
 										<option>JSON</option>
 										<option>Plaintext</option>
@@ -1003,19 +1023,19 @@
 									<label>Key <span class="ui icon help" data-content="">
 										<i class="question circle icon"></i>
 									</span></label>
-									<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Thing_Attachment.Interactions_Repository.Key"/>
+									<input type="text" name="Atlas_Thing.Thing_Attachment.Interactions_Repository.Key"/>
 								</div>
 								<div class="field">
 									<label>Login Name <span class="ui icon help" data-content="">
 										<i class="question circle icon"></i>
 									</span></label>
-									<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Thing_Attachment.Interactions_Repository.LoginName"/>
+									<input type="text" name="Atlas_Thing.Thing_Attachment.Interactions_Repository.LoginName"/>
 								</div>
 								<div class="field">
 									<label>Login Password <span class="ui icon help" data-content="">
 										<i class="question circle icon"></i>
 									</span></label>
-									<input type="password" name="Atlas_IoTDDL.Atlas_Thing.Thing_Attachment.Interactions_Repository.LoginPassword"/>
+									<input type="password" name="Atlas_Thing.Thing_Attachment.Interactions_Repository.LoginPassword"/>
 								</div>
 							</div>
 						</div>
@@ -1024,7 +1044,7 @@
 							<table class="wide"><tr>
 								<td><i class="dropdown icon"></i> Protocol Translator</td>
 								<td align="right"><div class="ui fitted toggle checkbox control">
-									<input type="checkbox" name="Atlas_IoTDDL.Atlas_Thing.Thing_Attachment.Protocol_Translator.Enabled"/>
+									<input type="checkbox" name="Atlas_Thing.Thing_Attachment.Protocol_Translator.Enabled"/>
 									<label></label>
 								</div></td>
 							</tr></table>
@@ -1082,7 +1102,7 @@
 							<table class="wide"><tr>
 								<td><i class="dropdown icon"></i> Collected Data Repository (Logserver)</td>
 								<td align="right"><div class="ui fitted toggle checkbox control">
-									<input type="checkbox" name="Atlas_IoTDDL.Atlas_Thing.Thing_Attachment.Logserver.Enabled"/>
+									<input type="checkbox" name="Atlas_Thing.Thing_Attachment.Logserver.Enabled"/>
 									<label></label>
 								</div></td>
 							</tr></table>
@@ -1132,7 +1152,7 @@
 							<table class="wide"><tr>
 								<td><i class="dropdown icon"></i> Online Vendor Documentation</td>
 								<td align="right"><div class="ui fitted toggle checkbox control">
-									<input type="checkbox" name="Atlas_IoTDDL.Atlas_Thing.Thing_Attachment.Vendor_OnlineDocumentation.Enabled"/>
+									<input type="checkbox" name="Atlas_Thing.Thing_Attachment.Vendor_OnlineDocumentation.Enabled"/>
 									<label></label>
 								</div></td>
 							</tr></table>
@@ -1142,7 +1162,7 @@
 								<label>URI <span class="ui icon help" data-content="">
 									<i class="question circle icon"></i>
 								</span></label>
-								<input type="text" name="Atlas_IoTDDL.Atlas_Thing.Thing_Attachment.Vendor_OnlineDocumentation.URI"/>
+								<input type="text" name="Atlas_Thing.Thing_Attachment.Vendor_OnlineDocumentation.URI"/>
 							</div>
 						</div>
 					</div>
@@ -1298,13 +1318,13 @@
 						<label>ID <span class="ui icon help" data-content="A unique identifier for this entity within your thing; a combination of characters and digits (e.g., E_Sensor23).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_IoTDDL.Entity_*.Descriptive_Metadata.ID" placeholder="place a unique identifier to this entity"/>
+						<input type="text" name="Atlas_Entities.Entity_*.Descriptive_Metadata.ID" placeholder="place a unique identifier to this entity"/>
 					</div>
 					<div class="field">
 						<label>Name <span class="ui icon help" data-content="What is this entity? (e.g., sensor, actuator).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" class="name" name="Atlas_IoTDDL.Entity_*.Descriptive_Metadata.Name" placeholder="add a short name to this entity"/>
+						<input type="text" class="name" name="Atlas_Entities.Entity_*.Descriptive_Metadata.Name" placeholder="add a short name to this entity"/>
 					</div>
 				</div>
 
@@ -1313,20 +1333,20 @@
 						<label>Owner <span class="ui icon help" data-content="Who is owner of this entity? (e.g., yourself, your company, your university)">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_IoTDDL.Entity_*.Descriptive_Metadata.Owner" placeholder="identify who owns this entity"/>
+						<input type="text" name="Atlas_Entities.Entity_*.Descriptive_Metadata.Owner" placeholder="identify who owns this entity"/>
 					</div>
 					<div class="field">
 						<label>Vendor <span class="ui icon help" data-content="Who is vendor of this entity? (e.g., Samsung, Wemo, or your are the vendor).">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_IoTDDL.Entity_*.Descriptive_Metadata.Vendor" placeholder="identify the vendor of this entity"/>
+						<input type="text" name="Atlas_Entities.Entity_*.Descriptive_Metadata.Vendor" placeholder="identify the vendor of this entity"/>
 					</div>
 
 					<div class="field">
 						<label>Category <span class="ui icon help" data-content="Is it a hardware entity?, or a software one?">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.Descriptive_Metadata.Category">
+						<select class="ui fluid dropdown" name="Atlas_Entities.Entity_*.Descriptive_Metadata.Category">
 							<option value="" disabled selected>Select the category of this entity</option>
 							<option value="Software">Software (e.g., library, script)</option>
 							<option value="Hardware">Hardware (e.g., sensor, actuator)</option>
@@ -1337,7 +1357,7 @@
 						<label>Type <span class="ui icon help" data-content="From the category of this entity, what is the type?">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.Descriptive_Metadata.Type">
+						<select class="ui fluid dropdown" name="Atlas_Entities.Entity_*.Descriptive_Metadata.Type">
 							<option value="" disabled selected>Select the type of this entity</option>
 							<option>Built-In</option>
 							<option>Connected</option>
@@ -1350,7 +1370,7 @@
 					<label>Description <span class="ui icon help" data-content="Provide a short description of this entity.">
 						<i class="question circle icon"></i>
 					</span></label>
-					<input type="text" name="Atlas_IoTDDL.Entity_*.Descriptive_Metadata.Description" placeholder="add a short description on this entity"/>
+					<input type="text" name="Atlas_Entities.Entity_*.Descriptive_Metadata.Description" placeholder="add a short description on this entity"/>
 				</div>
 
 				<!-------------------------------------------------------------------------------------->
@@ -1408,14 +1428,14 @@
 					<label>Name <span class="ui icon help" data-content="What can be a short and descriptive name for this service for you and others (e.g., things in the smart space) to trigger such functionalities? (e.g., turn on light, read current room temperature)">
 						<i class="question circle icon"></i>
 					</span></label>
-					<input type="text" class="name" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Name" placeholder="add a descriptive name on this service"/>
+					<input type="text" class="name" name="Atlas_Entities.Entity_*.Services.Service_*.Name" placeholder="add a descriptive name on this service"/>
 				</div>
 				<div class="two fields">
 					<div class="field">
 						<label>Category <span class="ui icon help" data-content="Will this service be used in Entertainment kind of IoT applications? or Health ones?">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.Services.Service_*.AppCategory">
+						<select class="ui fluid dropdown" name="Atlas_Entities.Entity_*.Services.Service_*.AppCategory">
 								<option value="" disabled selected>Select a category that describes the function of this service</option>
 								<option>Ambiance</option>
 								<option>Automation</option>
@@ -1437,7 +1457,7 @@
 						<label>Type <span class="ui icon help" data-content="What is the type of this service? (e.g., does it report data, or perform an action)">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Type">
+						<select class="ui fluid dropdown" name="Atlas_Entities.Entity_*.Services.Service_*.Type">
 							<option value="" disabled selected>Select the functionality type offered by this service</option>
 							<option value="Action">Action (e.g., turn on electric switch)</option>
 							<option value="Report">Report (e.g., read temperature sensor)</option>
@@ -1450,9 +1470,9 @@
 					<label>Keywords <span class="ui icon help" data-content="A set of keywords describing the offered functionality and the nature of an IoT application that can use this service (e.g., for a coffee machine service: morning, breakfast, energy, work)">
 						<i class="question circle icon"></i>
 						</span></label>
-					<!--<input type="text" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Keywords" placeholder="place a set of keywords (separated by commas) describing the functionality and nature of the service "></select>-->
+					<!--<input type="text" name="Atlas_Thing.Atlas_EntitiesAtlas_Entities.Entity_*.Services.Service_*.Keywords" placeholder="place a set of keywords (separated by commas) describing the functionality and nature of the service "></select>-->
 					<div multiple="" class="ui fluid fluid multiple search selection dropdown">
-						<input type="hidden" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Keywords">
+						<input type="hidden" name="Atlas_Entities.Entity_*.Services.Service_*.Keywords">
 						<div class="default text">Place a set of keywords (separated by commas) describing the functionality and nature of the service</div>
 					</div>
 				</div>
@@ -1461,7 +1481,7 @@
 					<label>Description <span class="ui icon help" data-content="How can you describe the functionality offered by this service?">
 						<i class="question circle icon"></i>
 						</span></label>
-					<input type="text" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Description" placeholder="add a short description on the offered service"/>
+					<input type="text" name="Atlas_Entities.Entity_*.Services.Service_*.Description" placeholder="add a short description on the offered service"/>
 				</div>
 
 				<br>
@@ -1477,7 +1497,7 @@
 					<label>Time Window<span class="ui icon help" data-content="the safe time (in seconds) that separates consecutive calls to the offered service, this window represents how long (in seconds) does the service take to complete the task">
 						<i class="question circle icon"></i>
 					</span></label>
-					<input type="text" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Contextual_Constraints.Time_Window" value="30seconds"/>
+					<input type="text" name="Atlas_Entities.Entity_*.Services.Service_*.Contextual_Constraints.Time_Window" value="30seconds"/>
 				</div>
 
 				<div class="two fields">
@@ -1485,7 +1505,7 @@
 						<label>Usage Mode<span class="ui icon help" data-content="Can this service be engaged in multiple applications at the same time?">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Contextual_Constraints.Usage_Mode">
+						<select class="ui fluid dropdown" name="Atlas_Entities.Entity_*.Services.Service_*.Contextual_Constraints.Usage_Mode">
 								<option value="" disabled selected>Select a usage mode of this service</option>
 								<option value="Single">Single (service can be engaged in single-application)</option>
 								<option value="Multiple">Multiple (this service can be engaged in multiple-applications)</option>
@@ -1495,7 +1515,7 @@
 						<label>Concurrent<span class="ui icon help" data-content="Does this service allow concurrent call, even from a single application?">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Contextual_Constraints.Concurrent"/>
+						<select class="ui fluid dropdown" name="Atlas_Entities.Entity_*.Services.Service_*.Contextual_Constraints.Concurrent"/>
 								<option value="" disabled selected>Select the concurrency mode</option>
 								<option value="No">No (this service allows single call within the time window)</option>
 								<option value="Yes">Yes (this service allows concurrent calls even from single/multiple mode)</option>
@@ -1519,15 +1539,15 @@
 								<td>Working <span class="ui icon help" data-content="the acceptable time window for the work of this service (including the regular work time as well as the maintanince time)">
 									<i class="question circle icon"></i>
 								</span></td>
-								<td><input type="text" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Temporal_Constraints.Working.StartTime" value="6am"/></td>
-								<td><input type="text" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Temporal_Constraints.Working.EndTime" value="10pm"/></td>
+								<td><input type="text" name="Atlas_Entities.Entity_*.Services.Service_*.Temporal_Constraints.Working.StartTime" value="6am"/></td>
+								<td><input type="text" name="Atlas_Entities.Entity_*.Services.Service_*.Temporal_Constraints.Working.EndTime" value="10pm"/></td>
 							</tr>
 							<tr>
 								<td>Callable <span class="ui icon help" data-content="the acceptable time window during which a user can trigger an API (e.g., user cannot trigger a call from 7pm to 7:30pm because of the periodic maintenance)">
 									<i class="question circle icon"></i>
 								</span></td>
-								<td><input type="text" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Temporal_Constraints.Callable.StartTime" value="6:30am"/></td>
-								<td><input type="text" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Temporal_Constraints.Callable.EndTime" value="9:30pm"/></td>
+								<td><input type="text" name="Atlas_Entities.Entity_*.Services.Service_*.Temporal_Constraints.Callable.StartTime" value="6:30am"/></td>
+								<td><input type="text" name="Atlas_Entities.Entity_*.Services.Service_*.Temporal_Constraints.Callable.EndTime" value="9:30pm"/></td>
 							</tr>
 						</tbody>
 					</table>
@@ -1569,14 +1589,14 @@
 						<label>Name <span class="ui icon help" data-content="provide short description of the output (e.g., the returned value from the temperature sensor is Celsius)"">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_IoTDDL.Entity_*.Services.Service_*.OutputDescription"/>
+						<input type="text" name="Atlas_Entities.Entity_*.Services.Service_*.OutputDescription"/>
 					</div>
 
 					<div class="field">
 						<label>Data Type <span class="ui icon help" data-content="provide the data type of the output">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.Services.Service_*.OutputType">
+						<select class="ui fluid dropdown" name="Atlas_Entities.Entity_*.Services.Service_*.OutputType">
 							<option value="void">void (nothing)</option>
 							<option value="int">Integer (non decimal number)</option>
 							<option value="float" disabled>Floating point (decimal number)</option>
@@ -1594,7 +1614,7 @@
 				<div class="functionality">
 					<div class="field">
 <!-- Keep this unindented to prevent the idents from showing up in the textarea. -->
-<textarea class="editor" name="Atlas_Thing.Atlas_Entity.Entity_*.Services.Service_*.Service_Formula">
+<textarea class="editor" name="Atlas_Entities.Entity_*.Services.Service_*.Service_Formula">
 // ~ Service body C/C++ code block ~
 // You can use the inputs you defined above by name
 // Any return values should match the specified output type
@@ -1685,10 +1705,10 @@
 						<i class="ui remove-row red icon close"></i> <i class="ui move-row blue icon sort"></i>
 					</td>
 					<td>
-						<div class="field"><input type="text" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Inputs.Input_*.Input_Description"></div>
+						<div class="field"><input type="text" name="Atlas_Entities.Entity_*.Services.Service_*.Inputs.Input_*.Input_Description"></div>
 					</td>
 					<td>
-						<div class="field"><select class="ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.Services.Service_*.Inputs.Input_*.Input_Type">
+						<div class="field"><select class="ui fluid dropdown" name="Atlas_Entities.Entity_*.Services.Service_*.Inputs.Input_*.Input_Type">
 							<option value="" disabled selected>Select the type of the input</option>
 							<option value="int">Integer (non decimal number)</option>
 							<option value="float" disabled>Floating point (decimal number)</option>
@@ -1711,14 +1731,14 @@
 						<label>Name <span class="ui icon help" data-content="What can be a short and descriptive name for this virtual service">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" class="name" name="Atlas_IoTDDL.Entity_*.UnboundedService.UB_*.Name" placeholder="add a descriptive name on this virtual service"/>
+						<input type="text" class="name" name="Atlas_Entities.Entity_*.UnboundedService.UB_*.Name" placeholder="add a descriptive name on this virtual service"/>
 					</div>
 
 					<div>
 						<label>Description <span class="ui icon help" data-content="Provide a description for this virtual service.">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_IoTDDL.Entity_*.UnboundedService.UB_*.Description"   placeholder="add a description on this virtual service."/>
+						<input type="text" name="Atlas_Entities.Entity_*.UnboundedService.UB_*.Description"   placeholder="add a description on this virtual service."/>
 					</div>
 				</div>
 
@@ -1731,7 +1751,7 @@
 						<label>Type <span class="ui icon help" data-content="What is the type of this virtual service? (e.g., does it report data, or perform an action)">
 							<i class="question circle icon"></i>
 						</span></label>
-						<select class="ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.UnboundedService.UB_*.MatchType">
+						<select class="ui fluid dropdown" name="Atlas_Entities.Entity_*.UnboundedService.UB_*.MatchType">
 							<option value="" disabled selected>Select the functionality type of this service</option>
 							<option value="Action">Action (e.g., turn on electric switch)</option>
 							<option value="Report">Report (e.g., read temperature sensor)</option>
@@ -1743,7 +1763,7 @@
 							<i class="question circle icon"></i>
 						</span></label>
 						<div multiple="" class="ui fluid fluid multiple search selection dropdown">
-							<input type="hidden" name="Atlas_IoTDDL.Entity_*.UnboundedService.UB_*.MatchVendor">
+							<input type="hidden" name="Atlas_Entities.Entity_*.UnboundedService.UB_*.MatchVendor">
 							<div class="default text">Identify the vendor of this virtual entity</div>
 						</div>
 					</div>
@@ -1752,7 +1772,7 @@
 							<i class="question circle icon"></i>
 						</span></label>
 						<div multiple="" class="ui fluid fluid multiple search selection dropdown">
-							<input type="hidden" name="Atlas_IoTDDL.Entity_*.UnboundedService.UB_*.MatchKeywords">
+							<input type="hidden" name="Atlas_Entities.Entity_*.UnboundedService.UB_*.MatchKeywords">
 							<div class="default text">Place a set of keywords (separated by commas) describing the functionality and nature of this virtual service</div>
 						</div>
 					</div>
@@ -1762,7 +1782,7 @@
 						<label>Match Value <span class="ui icon help" data-content="for your smart thing to find a match between this virtual service and other services offered by smart things in your smart space, the match value represents the minimum percentage of match in parameters between this virtual service and another offered service, to be considered as a match and perform the replacement">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_IoTDDL.Entity_*.UnboundedService.UB_*.MatchValue" value="70%"/>
+						<input type="text" name="Atlas_Entities.Entity_*.UnboundedService.UB_*.MatchValue" value="70%"/>
 				</div>
 
 			</div>
@@ -1778,19 +1798,19 @@
 						<label>Name <span class="ui icon help" data-content="Provide a descriptive name to this relationship">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" class="name" name="Atlas_IoTDDL.Entity_*.Relationships.Relationship_*.Name" placeholder="short and descriptive name to this relationship"/>
+						<input type="text" class="name" name="Atlas_Entities.Entity_*.Relationships.Relationship_*.Name" placeholder="short and descriptive name to this relationship"/>
 					</div>
 					<div class="four wide field">
 						<label>Establisher <span class="ui icon help" data-content="Mention who established this relationship (e.g., Samsung, Wemo, yourself)">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_IoTDDL.Entity_*.Relationships.Relationship_*.Establisher" placeholder="who is establishing this relationship"/>
+						<input type="text" name="Atlas_Entities.Entity_*.Relationships.Relationship_*.Establisher" placeholder="who is establishing this relationship"/>
 					</div>
 					<div class="eight wide field">
 						<label>Description <span class="ui icon help" data-content="Add a short description to this relationship">
 							<i class="question circle icon"></i>
 						</span></label>
-						<input type="text" name="Atlas_IoTDDL.Entity_*.Relationships.Relationship_*.Description" placeholder="a short description on this relationship"/>
+						<input type="text" name="Atlas_Entities.Entity_*.Relationships.Relationship_*.Description" placeholder="a short description on this relationship"/>
 					</div>
 				</div>
 
@@ -1801,7 +1821,7 @@
 				<div class="behavior three fields">
 					<div class="kind field">
 						<label>Relationship Type</label>
-						<select class="update-relationship ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.Relationships.Relationship_*.type">
+						<select class="update-relationship ui fluid dropdown" name="Atlas_Entities.Entity_*.Relationships.Relationship_*.type">
 							<option value="" disabled selected>Select the type of the relationship</option>
 							<option value="control">Control</option>
 							<option value="drive">Drive</option>
@@ -1821,7 +1841,7 @@
 						<label data-kind="contest">PREFER USING</label>
 						<label data-kind="interfere">DO NOT DO</label>
 
-						<select class="ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.Relationships.Relationship_*.Input1">
+						<select class="ui fluid dropdown" name="Atlas_Entities.Entity_*.Relationships.Relationship_*.Input1">
 							<option value="">select a service/unbounded service</option>
 						</select>
 					</div>
@@ -1834,7 +1854,7 @@
 						<label data-kind="contest">OVER</label>
 						<label data-kind="interfere">IF DOING</label>
 
-						<select class="ui fluid dropdown" name="Atlas_IoTDDL.Entity_*.Relationships.Relationship_*.Input2">
+						<select class="ui fluid dropdown" name="Atlas_Entities.Entity_*.Relationships.Relationship_*.Input2">
 							<option value="">select a service/unbounded service</option>
 						</select>
 					</div>
