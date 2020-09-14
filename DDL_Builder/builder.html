@@ -252,7 +252,6 @@
 					for (let r in rs)
 						updateKey(rs, r, 'Relationship_' + rn++);
 
-					console.log(es[e]['Descriptive_Metadata']['Category']);
 					switch (es[e]['Descriptive_Metadata']['Category']) {
 						case 'Hardware': meta['Number_Hardware']++; break;
 						case 'Software': meta['Number_Software']++; break;
@@ -267,26 +266,32 @@
 
 			};
 			let repairInputs = function(obj) {
-				let es = obj['Atlas_Thing']['Atlas_Entities'];
+				let es = obj['Atlas_Entities'];
 				for (let e in es) {
 					let ss = es[e]['Services'];
 					for (let s in ss) {
 						let types = '';
 						let descs = '';
 
-						let is = ss[s]['Service_Inputs'];
+						let is = ss[s]['Inputs'];
+						let ic = 0;
+
 						for (let i in is) {
 							let t = is[i]['Input_Type'];
 							let d = is[i]['Input_Description'];
 
 							types += (types == '') ? `${t}` : `,${t}`;
 							descs += (descs == '') ? `"${d}"` : `,"${d}"`;
+
+							ic++;
 						}
+
+						ss[s]['Service_NumberInputs'] = ic;
 
 						ss[s]['Service_InputTypes'] = types;
 						ss[s]['Service_InputDescriptions'] = descs;
 
-						delete ss[s]['Service_Inputs'];
+						delete ss[s]['Inputs'];
 
 						let code = ss[s]['Service_Formula'];
 						ss[s]['Service_Formula'] = '<![CDATA[\n' + code + '\n]]>';
