@@ -499,11 +499,11 @@
 					let code = undefined;
 					switch(parent.find('.update-statement').find('option:selected').val()) {
 						case 'print_value':
-							code = `print(${parent.find('#print-value').val()});`;
+							code = `print_value(${parent.find('#print-value').val()});`;
 							break;
 
 						case 'print_string':
-							code = `print("${parent.find('#print-string').val()}");`;
+							code = `print_string("${parent.find('#print-string').val()}");`;
 							break;
 
 						case 'DigitalWrite_High':
