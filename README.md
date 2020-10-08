@@ -13,6 +13,7 @@ Such configuration schemes are created by the thing vendor or owner and this the
 
 ## Access the latest version of the IoT-DDL Builder:
 > - [Use this tool to build an IoT-DDL file for your Atlas thing.](https://atlasframework.github.io/IoT-DDL/DDL_Builder/builder.html)
+> - [Example for a Servo Motor IoT-DDL.](https://github.com/AtlasFramework/IoT-DDL/blob/master/Resources/Servo_motor.xml)
 > - [Example for a Coffee Machine IoT-DDL.](https://github.com/AtlasFramework/IoT-DDL/blob/master/Resources/Coffee_Machine_IoTDDL.xml)
 
 
