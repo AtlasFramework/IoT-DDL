@@ -1,0 +1,157 @@
+<Atlas_IoTDDL>
+	<Atlas_Thing>
+		<Descriptive_Metadata>
+			<Thing_ATID>MySmartThing01</Thing_ATID>
+			<Thing_Name>RaspberryPi</Thing_Name>
+			<Thing_Owner>IoTLab</Thing_Owner>
+			<Thing_Vendor>RaspberryPiCo</Thing_Vendor>
+			<Thing_Model>3</Thing_Model>
+			<Thing_ReleaseDate>8/2020</Thing_ReleaseDate>
+			<Thing_Type>Thing of Things</Thing_Type>
+			<Thing_OperatingSystem>Raspbian</Thing_OperatingSystem>
+			<Thing_ShortDescription>Sensor Platform that allows you to connect sensors and actuators</Thing_ShortDescription>
+			<LongDescription></LongDescription>
+			<Thing_SSID>MySmartSpace</Thing_SSID>
+			<Space_Coordinates></Space_Coordinates>
+			<Space_Name>Living Room</Space_Name>
+			<Space_Description>My smart home</Space_Description>
+			<Space_Constraints>
+				<Temperature>
+					<Lower_Bound></Lower_Bound>
+					<Upper_Bound></Upper_Bound>
+				</Temperature>
+				<Humidity>
+					<Lower_Bound></Lower_Bound>
+					<Upper_Bound></Upper_Bound>
+				</Humidity>
+				<Voltage>
+					<Lower_Bound></Lower_Bound>
+					<Upper_Bound></Upper_Bound>
+				</Voltage>
+				<Radio_Interference_Radius></Radio_Interference_Radius>
+				<Safe_Temperature_Radius></Safe_Temperature_Radius>
+			</Space_Constraints>
+		</Descriptive_Metadata>
+		<Administrative_Metadata>
+			<Network_Manager>
+				<Module>WiFi</Module>
+				<Type>Built-In</Type>
+				<Network_Name>MySpaceNetwork</Network_Name>
+				<Network_Passcode>MySpaceNetwork</Network_Passcode>
+				<MulticastGroup>
+					<IP>232.1.1.1</IP>
+					<Port>1235</Port>
+				</MulticastGroup>
+				<Communication_Protocol>Sockets</Communication_Protocol>
+				<InterOperableCommunication>
+					<Broker>
+						<Vendor>HiveMQ</Vendor>
+						<Dashboard>http://www.mqtt-dashboard.com/</Dashboard>
+						<IP>broker.hivemq.com</IP>
+						<Port>1883</Port>
+					</Broker>
+					<Topic>
+						<Root>/Atlas</Root>
+						<Network_MQTTClient>/Network/MQTT_Client</Network_MQTTClient>
+						<Network_PrivateBroker>/Network/Private_Broker</Network_PrivateBroker>
+						<Multicast_ThingIdentity>/Multicast/Tweet_ThingIdentity</Multicast_ThingIdentity>
+						<Multicast_EntityIdentity>/Multicast/Tweet_EntityIdentity</Multicast_EntityIdentity>
+						<Multicast_API>/Multicast/API</Multicast_API>
+						<Unicast>/Unicast/Interaction</Unicast>
+					</Topic>
+				</InterOperableCommunication>
+				<OMA_DM>
+					<AccessName>Eclipse Leshan</AccessName>
+					<IP>coap://leshan.eclipseprojects.io</IP>
+					<Port>5683</Port>
+				</OMA_DM>
+			</Network_Manager>
+			<Memory_Manager>
+				<Store_Format></Store_Format>
+				<MemoryUnit_Application></MemoryUnit_Application>
+				<MemoryUnit_Knowledge></MemoryUnit_Knowledge>
+			</Memory_Manager>
+		</Administrative_Metadata>
+		<Thing_Attachment>
+
+		</Thing_Attachment>
+		<Structural_Metadata>
+			<Number_Hardware>1</Number_Hardware>
+			<Number_Software>0</Number_Software>
+			<Number_Hybrid>0</Number_Hybrid>
+			<Number_Entities>1</Number_Entities>
+		</Structural_Metadata>
+	</Atlas_Thing>
+	<Atlas_Entities>
+		<Entity_1>
+			<Descriptive_Metadata>
+				<ID>Entity1</ID>
+				<Name>ServoMotor</Name>
+				<Owner>IoTLab</Owner>
+				<Vendor>Smraza</Vendor>
+				<Category>Hardware</Category>
+				<Type>Connected</Type>
+				<Description>Servo motor that allows controlled motion by angles</Description>
+			</Descriptive_Metadata>
+			<Services>
+				<Service_1>
+					<Name>OperateMotor</Name>
+					<AppCategory>Automation</AppCategory>
+					<Type>Action</Type>
+					<Keywords>Motor,Run,Actuator,Steps,Servo</Keywords>
+					<Description>This service triggers the motor for clock wise then counter clock wise motion</Description>
+					<Contextual_Constraints>
+						<Time_Window>30seconds</Time_Window>
+						<Usage_Mode></Usage_Mode>
+						<Concurrent></Concurrent>
+					</Contextual_Constraints>
+					<Temporal_Constraints>
+						<Working>
+							<StartTime>6am</StartTime>
+							<EndTime>10pm</EndTime>
+						</Working>
+						<Callable>
+							<StartTime>6:30am</StartTime>
+							<EndTime>9:30pm</EndTime>
+						</Callable>
+					</Temporal_Constraints>
+					<OutputDescription></OutputDescription>
+					<OutputType>void</OutputType>
+					<Service_Formula><![CDATA[
+// ~ Service body C/C++ code block ~
+// You can use the inputs you defined above by name
+// Any return values should match the specified output type
+
+int pinID = 18;
+wiringPiSetupGpio();
+pinMode(pinID,PWM_OUTPUT);
+pwmSetMode(PWM_MODE_MS);
+pwmSetRange(2000);
+pwmSetClock(192);
+     
+
+for(int i=0;i<180;i = i + 20){
+		pwmWrite(pinID,i);
+		delay(1000);
+}
+
+for(int i=180;i>0;i = i - 20){
+		pwmWrite(pinID,i);
+		delay(1000);
+}
+]]></Service_Formula>
+					<Service_NumberInputs>0</Service_NumberInputs>
+					<Service_InputTypes></Service_InputTypes>
+					<Service_InputDescriptions></Service_InputDescriptions>
+				</Service_1>
+				<Number_Services>1</Number_Services>
+			</Services>
+			<UnboundedService>
+				<Number_UnboundedServices>0</Number_UnboundedServices>
+			</UnboundedService>
+			<Relationships>
+				<Number_Relationships>0</Number_Relationships>
+			</Relationships>
+		</Entity_1>
+	</Atlas_Entities>
+</Atlas_IoTDDL>
