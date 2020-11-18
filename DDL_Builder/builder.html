@@ -240,33 +240,33 @@
 					else
 						es[e]['Services'] = { 'Number_Services': 0 };
 
-					
+
 					let us = es[e]['UnboundedService'];
 					let un = 1;
 
 					for (let u in us)
 						updateKey(us, u, 'UB_' + un++);
-					
+
 					if (us)
 						us['Number_UnboundedServices'] = un - 1;
 					else
 						es[e]['UnboundedService'] = { 'Number_UnboundedServices': 0 };
 
-					
+
 					let rs = es[e]['Relationships'];
 					let rn = 1;
 
 					for (let r in rs)
 						updateKey(rs, r, 'Relationship_' + rn++);
-					
-					
+
+
 					if (rs)
-						rs['Number_Relationships'] = un - 1;
+						rs['Number_Relationships'] = rn - 1;
 					else
 						es[e]['Relationships'] = { 'Number_Relationships': 0 };
-					
-					
-					
+
+
+
 
 					switch (es[e]['Descriptive_Metadata']['Category']) {
 						case 'Hardware': meta['Number_Hardware']++; break;
